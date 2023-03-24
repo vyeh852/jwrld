@@ -6,11 +6,12 @@ import React from "react";
 import { CssVariable } from "next/dist/compiled/@next/font";
 
 const inter = Inter<CssVariable>({ subsets: ["latin"] });
+
 /**
  * Home Page of the Application
  * @return {JSX.Element}
  */
-export default function Test() {
+export default function Index() {
   return (
     <>
       <Head>
