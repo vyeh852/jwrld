@@ -1,6 +1,6 @@
-import "@/styles/globals.css";
 import type { AppProps } from "next/app";
 import React from "react";
+import { SessionProvider } from "next-auth/react";
 
 /**
  * Next.js uses this App component to initialize pages, we can do the following things:
@@ -12,5 +12,9 @@ import React from "react";
  * @return {JSX.Element}
  */
 export default function App({ Component, pageProps }: AppProps) {
-  return <Component {...pageProps} />;
+  return (
+    <SessionProvider session={pageProps.session}>
+      <Component {...pageProps} />
+    </SessionProvider>
+  );
 }
