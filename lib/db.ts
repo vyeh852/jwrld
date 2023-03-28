@@ -1,6 +1,6 @@
 import mysql from "serverless-mysql";
 
-type query = {
+type Query = {
   query: string;
   values: Array<unknown>;
 };
@@ -19,12 +19,15 @@ const db = mysql({
  * @param {string} query
  * @param {Array<unknown>} values
  */
-export default async function excuteQuery({ query, values }: query) {
+export default async function excuteQuery<T>({
+  query,
+  values,
+}: Query): Promise<T> {
   try {
-    const results = await db.query(query, values);
+    const results = await db.query<T>(query, values);
     await db.end();
     return results;
   } catch (error) {
-    return { error };
+    throw new Error();
   }
 }
