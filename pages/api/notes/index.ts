@@ -3,10 +3,6 @@ import { NetSession } from "@/pages/api/auth/[...nextauth]";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { getSession } from "next-auth/react";
 
-type User = {
-  id: number;
-};
-
 type Data = {
   success: boolean;
   message?: string;
@@ -21,16 +17,11 @@ async function notesHandler(req: NextApiRequest, res: NextApiResponse<Data>) {
     case "POST":
       try {
         const session = (await getSession({ req })) as NetSession | null;
-        if (!session) {
-          return res
-            .status(401)
-            .json({ success: false, message: "Unauthorized" });
-        }
         const title: string = req.body.title;
 
         await excuteQuery({
           query: "INSERT INTO notes (title, content, user_id) VALUES(?, ?, ?)",
-          values: [title, "", session.userId],
+          values: [title, "", session?.userId],
         });
 
         res.status(200).json({ success: true });

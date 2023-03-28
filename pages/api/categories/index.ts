@@ -8,10 +8,6 @@ type Data = {
   message?: string;
 };
 
-type User = {
-  id: number;
-};
-
 /**
  * @param {NextApiRequest} req
  * @param {NextApiResponse} res
@@ -24,16 +20,11 @@ async function categoriesHandler(
     case "POST":
       try {
         const session = (await getSession({ req })) as NetSession | null;
-        if (!session) {
-          return res
-            .status(401)
-            .json({ success: false, message: "Unauthorized" });
-        }
         const title: string = req.body.title;
 
         await excuteQuery({
           query: "INSERT INTO categories (name, user_id) VALUES(?, ?)",
-          values: [title, session["userId"]],
+          values: [title, session?.userId],
         });
 
         res.status(200).json({ success: true });
