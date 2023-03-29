@@ -1,9 +1,9 @@
 import React from "react";
 import { getSession } from "next-auth/react";
 import IndexPage from "@/components/home/index";
-import OverView from "@/components/home/OverView";
+import OverView from "@/components/home/Overview";
 import { Session } from "next-auth";
-import Header from "@/components/header";
+import Header from "@/components/Header";
 
 /**
  * Home Page of the Application

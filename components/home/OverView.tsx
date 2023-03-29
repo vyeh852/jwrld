@@ -1,5 +1,5 @@
 import React, { Reducer, useReducer } from "react";
-import Modal from "@/components/modal";
+import Modal from "@/components/Modal";
 import {
   Action,
   initialState,
