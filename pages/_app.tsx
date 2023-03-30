@@ -1,7 +1,6 @@
 import type { AppProps } from "next/app";
 import React from "react";
 import { SessionProvider } from "next-auth/react";
-import Header from "@/components/Header";
 
 /**
  * Next.js uses this App component to initialize pages, we can do the following things:
@@ -15,7 +14,6 @@ import Header from "@/components/Header";
 export default function App({ Component, pageProps }: AppProps) {
   return (
     <SessionProvider session={pageProps.session}>
-      <Header />
       <Component {...pageProps} />
     </SessionProvider>
   );

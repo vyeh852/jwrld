@@ -1,6 +1,7 @@
 import { signIn, signOut, useSession } from "next-auth/react";
 import React from "react";
 import { styled } from "@linaria/react";
+import { useRouter } from "next/router";
 
 const HeaderContainer = styled.div`
   display: flex;
@@ -12,10 +13,11 @@ const HeaderContainer = styled.div`
  */
 export default function Header(): JSX.Element {
   const { data: session } = useSession();
+  const router = useRouter();
 
   return (
     <HeaderContainer>
-      <p>jwrld</p>
+      <p onClick={() => router.push("/")}>jwrld</p>
       {session?.user ? (
         <button onClick={() => signOut()}>登出</button>
       ) : (

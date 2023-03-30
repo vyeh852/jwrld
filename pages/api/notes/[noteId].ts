@@ -62,7 +62,7 @@ export async function getNote(
     values: [noteId, userId],
   });
 
-  const noteContent = notes[0].content;
+  const noteContent = notes[0]?.content;
 
   return noteContent;
 }

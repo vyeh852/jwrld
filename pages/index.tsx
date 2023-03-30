@@ -5,6 +5,7 @@ import OverView from "@/components/home/Overview";
 import { Session } from "next-auth";
 import { getCategoryWithNote } from "@/pages/api/overview";
 import { Category } from "@/domain/models/category";
+import Layout from "@/components/Layout";
 
 /**
  * Home Page of the Application
@@ -17,7 +18,11 @@ export default function Index({
   session: Session;
   categories: Category[];
 }) {
-  return <>{session ? <OverView categories={categories} /> : <IndexPage />}</>;
+  return (
+    <Layout>
+      {session ? <OverView categories={categories} /> : <IndexPage />}
+    </Layout>
+  );
 }
 
 /**
