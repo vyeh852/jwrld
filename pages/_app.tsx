@@ -1,6 +1,7 @@
 import type { AppProps } from "next/app";
 import React from "react";
 import { SessionProvider } from "next-auth/react";
+import "@/styles/global.css";
 
 /**
  * Next.js uses this App component to initialize pages, we can do the following things:
