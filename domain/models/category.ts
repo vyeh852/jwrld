@@ -1,7 +1,7 @@
 import { Note } from "@/domain/models/note";
 
 export type Category = {
-  id: string | number;
+  id: number | null;
   title: string;
-  notes: Record<string, Array<Note>>;
+  notes: Note[];
 };
