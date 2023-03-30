@@ -3,7 +3,7 @@ import { NetSession } from "@/pages/api/auth/[...nextauth]";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { getSession } from "next-auth/react";
 
-type Data = {
+type Response = {
   success: boolean;
   message?: string;
 };
@@ -14,7 +14,7 @@ type Data = {
  */
 async function categoriesHandler(
   req: NextApiRequest,
-  res: NextApiResponse<Data>
+  res: NextApiResponse<Response>
 ) {
   switch (req.method) {
     case "POST":
