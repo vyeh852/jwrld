@@ -3,19 +3,21 @@ import { getSession } from "next-auth/react";
 import IndexPage from "@/components/home/index";
 import OverView from "@/components/home/Overview";
 import { Session } from "next-auth";
-import Header from "@/components/Header";
+import { getCategoryWithNote } from "@/pages/api/overview";
+import { Category } from "@/domain/models/category";
 
 /**
  * Home Page of the Application
  * @return {JSX.Element}
  */
-export default function Index({ session }: { session: Session }) {
-  return (
-    <>
-      <Header />
-      {session ? <OverView /> : <IndexPage />}
-    </>
-  );
+export default function Index({
+  session,
+  categories,
+}: {
+  session: Session;
+  categories: Category[];
+}) {
+  return <>{session ? <OverView categories={categories} /> : <IndexPage />}</>;
 }
 
 /**
@@ -23,6 +25,17 @@ export default function Index({ session }: { session: Session }) {
  */
 export async function getServerSideProps({ req }) {
   const session = await getSession({ req });
+
+  if (session) {
+    const categories = await getCategoryWithNote(req);
+
+    return {
+      props: {
+        session,
+        categories,
+      },
+    };
+  }
 
   return {
     props: {
