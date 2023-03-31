@@ -8,8 +8,6 @@ type NextAuthOptionsCallback = (
   res: NextApiResponse
 ) => NextAuthOptions;
 
-export type NetSession = Session & { userId: number };
-
 const nextAuthOptions: NextAuthOptionsCallback = (
   req: NextApiRequest,
   res: NextApiResponse
@@ -37,7 +35,7 @@ const nextAuthOptions: NextAuthOptionsCallback = (
           values: [token.id],
         });
 
-        (session as NetSession)["userId"] = user[0].id;
+        session["userId"] = user[0].id;
 
         return session;
       },

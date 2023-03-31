@@ -1,6 +1,5 @@
 import { NetNote } from "@/domain/remote/netNote";
 import excuteQuery from "@/lib/db";
-import { NetSession } from "@/pages/api/auth/[...nextauth]";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { getSession } from "next-auth/react";
 import { NextRequest } from "next/server";
@@ -52,7 +51,7 @@ export async function getNote(
   req: NextApiRequest | NextRequest,
   noteId: string
 ): Promise<string> {
-  const session = (await getSession({ req })) as NetSession | null;
+  const session = await getSession({ req });
   const userId = session?.userId;
 
   const notes = await excuteQuery<NetNote[]>({
@@ -73,7 +72,7 @@ export async function getNote(
  * @return {string}
  */
 async function updateNoteContent(req: NextApiRequest): Promise<void> {
-  const session = (await getSession({ req })) as NetSession | null;
+  const session = await getSession({ req });
   const userId = session?.userId;
   const content = req.body.content;
   const noteId = req.query.noteId;

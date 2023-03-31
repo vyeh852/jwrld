@@ -1,6 +1,5 @@
 import { NetNote } from "@/domain/remote/netNote";
 import excuteQuery from "@/lib/db";
-import { NetSession } from "@/pages/api/auth/[...nextauth]";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { getSession } from "next-auth/react";
 import { NextRequest } from "next/server";
@@ -8,7 +7,7 @@ import { NextRequest } from "next/server";
 type NetCategoryResponse = {
   id: number | null;
   name: string;
-  notes: Array<Pick<NetNote, "id" | "title" | "content">>;
+  notes: Array<Pick<NetNote, "id" | "title">>;
 };
 
 type Response = {
@@ -58,16 +57,18 @@ export default async function overviewHandler(
 export async function getCategoryWithNote(
   req: NextApiRequest | NextRequest
 ): Promise<NetCategoryResponse[]> {
-  const session = (await getSession({ req })) as NetSession | null;
+  const session = await getSession({ req });
   const userId = session?.userId;
 
   const categoryWithNote = await excuteQuery<NetCategoryWithNote[]>({
     query: `
-         SELECT categories.id AS category_id, notes.id AS note_id, name AS category_name, title AS note_title, content AS note_content FROM categories 
+         SELECT categories.id AS category_id, notes.id AS note_id, name AS category_name, title AS note_title 
+         FROM categories 
          LEFT JOIN notes ON categories.id = notes.category_id 
          WHERE categories.user_id = ?
          UNION 
-         SELECT categories.id AS category_id, notes.id AS note_id, name as category_name, title AS note_title, content AS note_content FROM notes 
+         SELECT categories.id AS category_id, notes.id AS note_id, name as category_name, title AS note_title
+         FROM notes 
          LEFT JOIN categories ON categories.id = notes.category_id 
          WHERE notes.category_id IS NULL AND notes.user_id = ?
         `,
@@ -90,7 +91,6 @@ const createToNetCategoryResponse = (
         targetCategory.notes.push({
           id: cur.note_id,
           title: cur.note_title,
-          content: cur.note_content,
         });
       } else {
         const categoryResponse = {
@@ -101,7 +101,6 @@ const createToNetCategoryResponse = (
                 {
                   id: cur.note_id,
                   title: cur.note_title,
-                  content: cur.note_content,
                 },
               ]
             : [],
