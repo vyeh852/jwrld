@@ -13,9 +13,9 @@ const Textarea = styled.div`
   font-size: 15px;
   overflow: auto;
   .cm-theme-light,
-  .cm-editor {
+  .cm-editor,
+  .cm-theme {
     height: 100%;
-    background-color: #282c34;
   }
 
   .cm-content {
