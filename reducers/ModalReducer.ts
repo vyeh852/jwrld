@@ -54,14 +54,14 @@ export const reducer: Reducer<State, Action> = (state, action) => {
       return {
         ...state,
         onConfirmCallback: createNote,
-        title: "創建筆記",
+        title: "輸入筆記名稱",
         show: true,
       };
     case ActionType.CreateCategory:
       return {
         ...state,
         onConfirmCallback: createCategory,
-        title: "創建類別",
+        title: "輸入類別名稱",
         show: true,
       };
 

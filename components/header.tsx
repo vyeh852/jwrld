@@ -6,6 +6,7 @@ import { PreviewType } from "@/components/Layout";
 import classNames from "classnames";
 
 const HeaderContainer = styled.div`
+  z-index: 10;
   display: flex;
   justify-content: space-between;
   height: 50px;
