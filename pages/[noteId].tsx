@@ -15,6 +15,9 @@ const Container = styled.div`
     min-width: 0;
     height: calc(100vh - 50px);
     overflow: auto;
+    img {
+      max-width: 100%;
+    }
   }
   a {
     word-wrap: break-word;
