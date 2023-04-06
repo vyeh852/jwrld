@@ -1,6 +1,7 @@
-import React, { useCallback } from "react";
+import React from "react";
 import { styled } from "@linaria/react";
-import useCodeMirror from "@/components/note/use-codemirror";
+import CodeMirror from "@uiw/react-codemirror";
+import { oneDarkTheme } from "@codemirror/theme-one-dark";
 
 const Textarea = styled.div`
   flex: 1 1 50%;
@@ -31,14 +32,20 @@ export default function Editor({
   noteContent,
   onChangeNoteContent,
 }: EditorProps): JSX.Element {
-  const handleChange = useCallback(
-    (state) => onChangeNoteContent(state.doc.toString()),
-    [onChangeNoteContent]
+  return (
+    <Textarea className="code-mirror">
+      <CodeMirror
+        value={noteContent}
+        basicSetup={{
+          highlightActiveLineGutter: true,
+          foldGutter: true,
+          bracketMatching: true,
+          autocompletion: true,
+          syntaxHighlighting: true,
+        }}
+        extensions={[oneDarkTheme]}
+        onChange={onChangeNoteContent}
+      />
+    </Textarea>
   );
-  const [refContainer, editorView] = useCodeMirror<HTMLDivElement>({
-    initialDoc: noteContent,
-    onChange: handleChange,
-  });
-
-  return <Textarea className="editor-wrapper" ref={refContainer}></Textarea>;
 }
