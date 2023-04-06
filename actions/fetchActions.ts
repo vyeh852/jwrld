@@ -55,3 +55,13 @@ export const getCategoryWithNote = async (): Promise<Category[]> => {
     );
   }
 };
+
+export const deleteNote = async ({ id }: Pick<Note, "id">): Promise<void> => {
+  try {
+    await axios.delete(`/api/notes/${id}`);
+  } catch (error) {
+    throw new Error(
+      "something went wrong when deleting note, please try it again later"
+    );
+  }
+};

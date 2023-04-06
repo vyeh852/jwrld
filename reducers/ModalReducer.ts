@@ -1,4 +1,5 @@
-import { createCategory, createNote } from "@/actions/fetchActions";
+import { createCategory, createNote, deleteNote } from "@/actions/fetchActions";
+import { Note } from "@/domain/models/note";
 import { Reducer } from "react";
 
 export enum ActionType {
@@ -8,6 +9,7 @@ export enum ActionType {
   UpdateCategory = "updateCategory",
   CloseModal = "closeModal",
   EditContent = "editContent",
+  DeleteNote = "deleteNote",
 }
 
 export type Action =
@@ -29,18 +31,26 @@ export type Action =
   | {
       type: ActionType.EditContent;
       payload: string;
+    }
+  | {
+      type: ActionType.DeleteNote;
+      payload: Pick<Note, "id" | "title">;
     };
 
 export type State = {
   show: boolean;
   title: string;
   content: string;
+  noteId: number;
+  showInput: boolean;
   onConfirmCallback?: (params: any) => Promise<void>;
 };
 
 export const initialState: State = {
   show: false,
   title: "",
+  noteId: 0,
+  showInput: false,
   content: "",
 };
 
@@ -56,12 +66,22 @@ export const reducer: Reducer<State, Action> = (state, action) => {
         onConfirmCallback: createNote,
         title: "輸入筆記名稱",
         show: true,
+        showInput: true,
       };
     case ActionType.CreateCategory:
       return {
         ...state,
         onConfirmCallback: createCategory,
         title: "輸入類別名稱",
+        show: true,
+        showInput: true,
+      };
+    case ActionType.DeleteNote:
+      return {
+        ...state,
+        onConfirmCallback: deleteNote,
+        noteId: action.payload.id,
+        title: `確定要刪除${action.payload.title}嗎?`,
         show: true,
       };
 

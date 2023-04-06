@@ -1,4 +1,5 @@
 import Note from "@/components/note/Note";
+import { Note as DomainNote } from "@/domain/models/note";
 import { Category } from "@/domain/models/category";
 import React from "react";
 import { styled } from "@linaria/react";
@@ -6,8 +7,9 @@ import { styled } from "@linaria/react";
 const Container = styled.div`
   padding: 15px;
   flex: 1;
-  > div {
-    margin-top: 10px;
+  > div,
+  .category-title {
+    margin-bottom: 15px;
   }
   @media (min-width: 768px) {
     display: flex;
@@ -39,10 +41,12 @@ const NoteContainer = styled.div`
 
 type CategoryNotesContainerProps = {
   categories: Category[];
+  onDeleteNote: ({ id, title }: Pick<DomainNote, "id" | "title">) => void;
 };
 
 type CategoryProps = {
   category: Category;
+  onDeleteNote: ({ id, title }: Pick<DomainNote, "id" | "title">) => void;
 };
 
 /**
@@ -50,23 +54,31 @@ type CategoryProps = {
  */
 export default function CategoryNotesContainer({
   categories,
+  onDeleteNote,
 }: CategoryNotesContainerProps): JSX.Element {
   return (
     <Container>
       {categories.map((category) => (
-        <CategoryWithNote category={category} key={category.id} />
+        <CategoryWithNote
+          category={category}
+          key={category.id}
+          onDeleteNote={onDeleteNote}
+        />
       ))}
     </Container>
   );
 }
 
-const CategoryWithNote = ({ category }: CategoryProps): JSX.Element => {
+const CategoryWithNote = ({
+  category,
+  onDeleteNote,
+}: CategoryProps): JSX.Element => {
   return (
     <div>
       <p className="category-title">{category.name}</p>
       <NoteContainer>
         {category.notes.map((note) => (
-          <Note note={note} key={note.id} />
+          <Note note={note} key={note.id} onDeleteNote={onDeleteNote} />
         ))}
       </NoteContainer>
     </div>

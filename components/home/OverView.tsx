@@ -30,14 +30,14 @@ export default function OverView({
     reducer,
     initialState
   );
-  const { title, show, onConfirmCallback, content } = modal;
+  const { title, show, onConfirmCallback, content, noteId, showInput } = modal;
 
   const onConfirm = async () => {
-    if (!onConfirmCallback || !content) {
+    if (!onConfirmCallback) {
       return;
     }
 
-    await onConfirmCallback({ title: content });
+    await onConfirmCallback({ title: content, id: noteId });
     const categories = await getCategoryWithNote();
     setCategoriesState(categories);
     dispatchModal({ type: ActionType.CloseModal });
@@ -51,22 +51,29 @@ export default function OverView({
         }
         onCreateNote={() => dispatchModal({ type: ActionType.CreateNote })}
       />
-      <CategoryNotesContainer categories={categoriesState} />
+      <CategoryNotesContainer
+        categories={categoriesState}
+        onDeleteNote={({ id, title }) =>
+          dispatchModal({ type: ActionType.DeleteNote, payload: { id, title } })
+        }
+      />
       <Modal
         title={title}
         show={show}
         onConfirm={onConfirm}
         onClose={() => dispatchModal({ type: ActionType.CloseModal })}
       >
-        <input
-          type="text"
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-            dispatchModal({
-              type: ActionType.EditContent,
-              payload: e.target.value,
-            })
-          }
-        />
+        {showInput && (
+          <input
+            type="text"
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              dispatchModal({
+                type: ActionType.EditContent,
+                payload: e.target.value,
+              })
+            }
+          />
+        )}
       </Modal>
     </OverviewContainer>
   );

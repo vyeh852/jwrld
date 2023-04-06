@@ -37,6 +37,15 @@ export default async function noteHandler(
         res.status(422).json({ success: false });
       }
       return;
+    case "DELETE":
+      try {
+        await deleteNote(req);
+
+        res.status(200).json({ success: true });
+      } catch (error) {
+        res.status(422).json({ success: false });
+      }
+      return;
     default:
       throw new Error("not a valid request method on this controller");
   }
@@ -68,8 +77,7 @@ export async function getNote(
 
 /**
  * @param {NextApiRequest} req
- * @param {string} noteId
- * @return {string}
+ * @return {Promise<void>}
  */
 async function updateNoteContent(req: NextApiRequest): Promise<void> {
   const session = await getSession({ req });
@@ -82,5 +90,22 @@ async function updateNoteContent(req: NextApiRequest): Promise<void> {
            UPDATE notes SET content = ? WHERE id = ? AND user_id = ?
           `,
     values: [content, noteId, userId],
+  });
+}
+
+/**
+ * @param {NextApiRequest} req
+ * @return {Promise<void>}
+ */
+async function deleteNote(req: NextApiRequest): Promise<void> {
+  const session = await getSession({ req });
+  const userId = session?.userId;
+  const noteId = req.query.noteId;
+
+  await excuteQuery({
+    query: `
+           DELETE FROM notes WHERE id = ? AND user_id = ?
+          `,
+    values: [noteId, userId],
   });
 }
