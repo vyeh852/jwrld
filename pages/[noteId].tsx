@@ -13,6 +13,8 @@ const Container = styled.div`
   .markdown-result {
     flex: 1 1 50%;
     min-width: 0;
+    height: calc(100vh - 50px);
+    overflow: auto;
   }
   a {
     word-wrap: break-word;
@@ -27,7 +29,7 @@ const Container = styled.div`
   }
 
   &.reading {
-    > textarea {
+    > .code-mirror {
       display: none;
     }
   }
