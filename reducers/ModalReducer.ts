@@ -82,6 +82,7 @@ export const reducer: Reducer<State, Action> = (state, action) => {
         onConfirmCallback: deleteNote,
         noteId: action.payload.id,
         title: `確定要刪除${action.payload.title}嗎?`,
+        showInput: false,
         show: true,
       };
 
