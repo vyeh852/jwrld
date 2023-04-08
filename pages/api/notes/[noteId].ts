@@ -54,14 +54,18 @@ export default async function noteHandler(
 /**
  * @param {NextApiRequest} req
  * @param {string} noteId
+ * @param {userId | undefined} userId
  * @return {string}
  */
 export async function getNote(
   req: NextApiRequest | NextRequest,
-  noteId: string
+  noteId: string,
+  userId?: number
 ): Promise<string> {
-  const session = await getSession({ req });
-  const userId = session?.userId;
+  if (!userId) {
+    const session = await getSession({ req });
+    userId = session?.userId;
+  }
 
   const notes = await excuteQuery<NetNote[]>({
     query: `

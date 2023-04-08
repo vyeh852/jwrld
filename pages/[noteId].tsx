@@ -163,14 +163,14 @@ export default function Note({
  * fetch note content
  */
 export async function getServerSideProps({ req, params }) {
-  const noteContent = await getNote(req, params.noteId);
+  const session = await getSession({ req });
+  const noteContent = await getNote(req, params.noteId, session?.userId);
+
   if (noteContent === undefined) {
     return {
       notFound: true,
     };
   }
-
-  const session = await getSession({ req });
 
   return {
     props: {
