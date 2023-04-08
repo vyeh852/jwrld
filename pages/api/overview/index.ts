@@ -52,13 +52,17 @@ export default async function overviewHandler(
 
 /**
  * @param {NextApiRequest} req
+ * @param {number | undefined} userId
  * @return {NetCategoryResponse[]}
  */
 export async function getCategoryWithNote(
-  req: NextApiRequest | NextRequest
+  req: NextApiRequest | NextRequest,
+  userId?: number
 ): Promise<NetCategoryResponse[]> {
-  const session = await getSession({ req });
-  const userId = session?.userId;
+  if (!userId) {
+    const session = await getSession({ req });
+    userId = session?.userId;
+  }
 
   const categoryWithNote = await excuteQuery<NetCategoryWithNote[]>({
     query: `

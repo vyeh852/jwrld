@@ -32,7 +32,7 @@ export async function getServerSideProps({ req }) {
   const session = await getSession({ req });
 
   if (session) {
-    const categories = await getCategoryWithNote(req);
+    const categories = await getCategoryWithNote(req, session.userId);
 
     return {
       props: {
