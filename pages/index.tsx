@@ -1,11 +1,12 @@
 import React from "react";
-import { getSession } from "next-auth/react";
 import IndexPage from "@/components/home/index";
 import OverView from "@/components/home/Overview";
 import { Session } from "next-auth";
 import { getCategoryWithNote } from "@/pages/api/overview";
 import { Category } from "@/domain/models/category";
 import Layout from "@/components/Layout";
+import { getUserSession } from "@/pages/api/auth/[...nextauth]";
+import { GetServerSideProps } from "next";
 
 /**
  * Home Page of the Application
@@ -28,8 +29,8 @@ export default function Index({
 /**
  * if verified google login, pass the session to the provider
  */
-export async function getServerSideProps({ req }) {
-  const session = await getSession({ req });
+export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
+  const session = await getUserSession(req, res);
 
   if (session) {
     const categories = await getCategoryWithNote(req, session.userId);
@@ -47,4 +48,4 @@ export async function getServerSideProps({ req }) {
       session,
     },
   };
-}
+};

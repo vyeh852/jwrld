@@ -4,9 +4,10 @@ import { getNote } from "@/pages/api/notes/[noteId]";
 import { updateNoteContent } from "@/actions/fetchActions";
 import { useRouter } from "next/router";
 import Layout, { PreviewTypeContext } from "@/components/Layout";
-import { getSession } from "next-auth/react";
 import Preview from "@/components/note/Preview";
 import Editor from "@/components/note/Editor";
+import { GetServerSideProps } from "next";
+import { getUserSession } from "@/pages/api/auth/[...nextauth]";
 
 const Container = styled.div`
   display: flex;
@@ -162,8 +163,12 @@ export default function Note({
 /**
  * fetch note content
  */
-export async function getServerSideProps({ req, params }) {
-  const session = await getSession({ req });
+export const getServerSideProps: GetServerSideProps = async ({
+  req,
+  res,
+  params,
+}) => {
+  const session = await getUserSession(req, res);
   const noteContent = await getNote(req, params.noteId, session?.userId);
 
   if (noteContent === undefined) {
@@ -178,4 +183,4 @@ export async function getServerSideProps({ req, params }) {
       noteContent,
     },
   };
-}
+};
