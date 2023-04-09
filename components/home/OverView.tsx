@@ -9,12 +9,31 @@ import {
 } from "@/reducers/ModalReducer";
 import { getCategoryWithNote } from "@/actions/fetchActions";
 import { Category } from "@/domain/models/category";
-import CategoryNotesContainer from "@/components/home/CategoryNotesContainer";
+import { CategoryNote } from "@/components/home/CategoryNote";
 import SettingsPanel from "@/components/home/SettingsPanel";
 import { styled } from "@linaria/react";
 
 const OverviewContainer = styled.div`
   display: flex;
+`;
+
+const Container = styled.div`
+  padding: 15px;
+  flex: 1;
+  > div,
+  .category-title {
+    margin-bottom: 15px;
+  }
+  @media (min-width: 768px) {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+
+  .category-title {
+    font-size: 20px;
+    font-weight: 700;
+  }
 `;
 
 /**
@@ -51,12 +70,20 @@ export default function OverView({
         }
         onCreateNote={() => dispatchModal({ type: ActionType.CreateNote })}
       />
-      <CategoryNotesContainer
-        categories={categoriesState}
-        onDeleteNote={({ id, title }) =>
-          dispatchModal({ type: ActionType.DeleteNote, payload: { id, title } })
-        }
-      />
+      <Container>
+        {categoriesState.map((category) => (
+          <CategoryNote
+            category={category}
+            key={category.id}
+            onDeleteNote={({ id, title }) =>
+              dispatchModal({
+                type: ActionType.DeleteNote,
+                payload: { id, title },
+              })
+            }
+          />
+        ))}
+      </Container>
       <Modal
         title={title}
         show={show}
