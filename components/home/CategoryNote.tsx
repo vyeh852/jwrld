@@ -3,6 +3,8 @@ import { Note as DomainNote } from "@/domain/models/note";
 import { Category } from "@/domain/models/category";
 import React from "react";
 import { styled } from "@linaria/react";
+import { DropTargetMonitor, useDrop } from "react-dnd";
+import { ItemTypes } from "@/constant/draggableItem";
 
 const NoteContainer = styled.div`
   > div {
@@ -22,19 +24,63 @@ const NoteContainer = styled.div`
 
 type CategoryProps = {
   category: Category;
+  onMoveNote: (
+    from: { categoryId: number | null; index: number },
+    to: { categoryId: number | null; index: number }
+  ) => void;
   onDeleteNote: ({ id, title }: Pick<DomainNote, "id" | "title">) => void;
 };
 
 export const CategoryNote = ({
   category,
   onDeleteNote,
+  onMoveNote,
 }: CategoryProps): JSX.Element => {
+  const [{ isOver }, dropRef] = useDrop({
+    accept: ItemTypes.NOTE,
+    drop: (
+      item: { id: number; categoryId: number | null; index: number },
+      monitor: DropTargetMonitor
+    ) => {
+      const from = {
+        categoryId: item.categoryId,
+        index: item.index,
+      };
+      const toCategoryId = category.id;
+
+      if (monitor.didDrop()) {
+        // 處理疊在 note 上, 插入筆記的情境
+        const toIndex =
+          monitor.getDropResult<{ toIndex: number }>()?.toIndex || 0;
+
+        onMoveNote(from, { categoryId: toCategoryId, index: toIndex });
+      } else {
+        // 處理隨意丟進 container, 插入該類別筆記的最後面
+        const toCategoryNotesCount = category.notes.length;
+
+        onMoveNote(from, {
+          categoryId: toCategoryId,
+          index: toCategoryNotesCount,
+        });
+      }
+    },
+    collect: (monitor) => ({
+      isOver: !!monitor.isOver(),
+    }),
+  });
+
   return (
-    <div>
+    <div ref={dropRef} style={{ background: isOver ? "#eee" : "transparent" }}>
       <p className="category-title">{category.name}</p>
       <NoteContainer>
-        {category.notes.map((note) => (
-          <Note note={note} key={note.id} onDeleteNote={onDeleteNote} />
+        {category.notes.map((note, index) => (
+          <Note
+            note={note}
+            key={`${note.id}-${index}`}
+            index={index}
+            onDeleteNote={onDeleteNote}
+            categoryId={category.id}
+          />
         ))}
       </NoteContainer>
     </div>

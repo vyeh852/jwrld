@@ -12,6 +12,9 @@ import { Category } from "@/domain/models/category";
 import { CategoryNote } from "@/components/home/CategoryNote";
 import SettingsPanel from "@/components/home/SettingsPanel";
 import { styled } from "@linaria/react";
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
+import _ from "lodash";
 
 const OverviewContainer = styled.div`
   display: flex;
@@ -62,6 +65,34 @@ export default function OverView({
     dispatchModal({ type: ActionType.CloseModal });
   };
 
+  const onMoveNote = (
+    from: { categoryId: number | null; index: number },
+    to: { categoryId: number | null; index: number }
+  ) => {
+    const { categoryId: fromCategoryId, index: fromIndex } = from;
+    const { categoryId: toCategoryId, index: toIndex } = to;
+    const clonedCategories = _.cloneDeep(categoriesState);
+    const fromCategory = clonedCategories.find(
+      (category) => category.id === fromCategoryId
+    );
+    const toCategory = clonedCategories.find(
+      (category) => category.id === toCategoryId
+    );
+    if (fromCategory && toCategory) {
+      const fromNote = fromCategory.notes[fromIndex];
+
+      if (fromCategoryId === toCategoryId && fromIndex < toIndex) {
+        toCategory.notes.splice(toIndex + 1, 0, fromNote);
+        fromCategory.notes.splice(fromIndex, 1);
+      } else {
+        fromCategory.notes.splice(fromIndex, 1);
+        toCategory.notes.splice(toIndex, 0, fromNote);
+      }
+
+      setCategoriesState(clonedCategories);
+    }
+  };
+
   return (
     <OverviewContainer>
       <SettingsPanel
@@ -70,20 +101,23 @@ export default function OverView({
         }
         onCreateNote={() => dispatchModal({ type: ActionType.CreateNote })}
       />
-      <Container>
-        {categoriesState.map((category) => (
-          <CategoryNote
-            category={category}
-            key={category.id}
-            onDeleteNote={({ id, title }) =>
-              dispatchModal({
-                type: ActionType.DeleteNote,
-                payload: { id, title },
-              })
-            }
-          />
-        ))}
-      </Container>
+      <DndProvider backend={HTML5Backend}>
+        <Container>
+          {categoriesState.map((category) => (
+            <CategoryNote
+              onMoveNote={onMoveNote}
+              category={category}
+              key={category.id}
+              onDeleteNote={({ id, title }) =>
+                dispatchModal({
+                  type: ActionType.DeleteNote,
+                  payload: { id, title },
+                })
+              }
+            />
+          ))}
+        </Container>
+      </DndProvider>
       <Modal
         title={title}
         show={show}
