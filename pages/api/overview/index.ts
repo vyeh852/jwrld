@@ -1,8 +1,7 @@
 import { NetNote } from "@/domain/remote/netNote";
 import excuteQuery from "@/lib/db";
+import { getUserSession } from "@/pages/api/auth/[...nextauth]";
 import type { NextApiRequest, NextApiResponse } from "next";
-import { getSession } from "next-auth/react";
-import { NextRequest } from "next/server";
 
 type NetCategoryResponse = {
   id: number | null;
@@ -35,7 +34,9 @@ export default async function overviewHandler(
   switch (req.method) {
     case "GET":
       try {
-        const categoryWithNote = await getCategoryWithNote(req);
+        const session = await getUserSession(req, res);
+        const userId = session?.userId;
+        const categoryWithNote = await getCategoryWithNote(userId);
 
         res.status(200).json({
           success: true,
@@ -51,19 +52,12 @@ export default async function overviewHandler(
 }
 
 /**
- * @param {NextApiRequest} req
  * @param {number | undefined} userId
  * @return {NetCategoryResponse[]}
  */
 export async function getCategoryWithNote(
-  req: NextApiRequest | NextRequest,
   userId?: number
 ): Promise<NetCategoryResponse[]> {
-  if (!userId) {
-    const session = await getSession({ req });
-    userId = session?.userId;
-  }
-
   const categoryWithNote = await excuteQuery<NetCategoryWithNote[]>({
     query: `
          SELECT categories.id AS category_id, notes.id AS note_id, name AS category_name, title AS note_title 

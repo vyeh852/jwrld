@@ -1,6 +1,6 @@
 import excuteQuery from "@/lib/db";
+import { getUserSession } from "@/pages/api/auth/[...nextauth]";
 import type { NextApiRequest, NextApiResponse } from "next";
-import { getSession } from "next-auth/react";
 
 type Response = {
   success: boolean;
@@ -18,7 +18,7 @@ async function notesHandler(
   switch (req.method) {
     case "POST":
       try {
-        const session = await getSession({ req });
+        const session = await getUserSession(req, res);
         const title: string = req.body.title;
 
         await excuteQuery({

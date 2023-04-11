@@ -33,7 +33,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   const session = await getUserSession(req, res);
 
   if (session) {
-    const categories = await getCategoryWithNote(req, session.userId);
+    const categories = await getCategoryWithNote(session.userId);
 
     return {
       props: {

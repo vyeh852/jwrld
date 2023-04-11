@@ -178,7 +178,7 @@ export const getServerSideProps: GetServerSideProps = async ({
     };
   }
 
-  const noteContent = await getNote(req, params.noteId, session.userId);
+  const noteContent = await getNote(params.noteId, session.userId);
 
   if (noteContent === undefined) {
     return {

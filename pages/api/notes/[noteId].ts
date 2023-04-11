@@ -1,8 +1,7 @@
 import { NetNote } from "@/domain/remote/netNote";
 import excuteQuery from "@/lib/db";
+import { getUserSession } from "@/pages/api/auth/[...nextauth]";
 import type { NextApiRequest, NextApiResponse } from "next";
-import { getSession } from "next-auth/react";
-import { NextRequest } from "next/server";
 
 type Response = {
   success: boolean;
@@ -17,11 +16,14 @@ export default async function noteHandler(
   req: NextApiRequest,
   res: NextApiResponse<Response>
 ) {
+  const session = await getUserSession(req, res);
+  const userId = session?.userId;
+
   switch (req.method) {
     case "GET":
       try {
         const { noteId } = req.query;
-        const noteContent = await getNote(req, noteId);
+        const noteContent = await getNote(noteId, userId);
 
         res.status(200).json({ success: true, message: noteContent });
       } catch (error) {
@@ -30,7 +32,7 @@ export default async function noteHandler(
       return;
     case "PUT":
       try {
-        await updateNoteContent(req);
+        await updateNoteContent(req, userId);
 
         res.status(200).json({ success: true });
       } catch (error) {
@@ -39,7 +41,7 @@ export default async function noteHandler(
       return;
     case "DELETE":
       try {
-        await deleteNote(req);
+        await deleteNote(req, userId);
 
         res.status(200).json({ success: true });
       } catch (error) {
@@ -52,21 +54,14 @@ export default async function noteHandler(
 }
 
 /**
- * @param {NextApiRequest} req
  * @param {string} noteId
- * @param {userId | undefined} userId
+ * @param {number | undefined} userId
  * @return {string}
  */
 export async function getNote(
-  req: NextApiRequest | NextRequest,
   noteId: string,
   userId?: number
 ): Promise<string> {
-  if (!userId) {
-    const session = await getSession({ req });
-    userId = session?.userId;
-  }
-
   const notes = await excuteQuery<NetNote[]>({
     query: `
            SELECT content FROM notes WHERE id = ? AND user_id = ?
@@ -81,11 +76,13 @@ export async function getNote(
 
 /**
  * @param {NextApiRequest} req
+ * @param {number | undefined} userId
  * @return {Promise<void>}
  */
-async function updateNoteContent(req: NextApiRequest): Promise<void> {
-  const session = await getSession({ req });
-  const userId = session?.userId;
+async function updateNoteContent(
+  req: NextApiRequest,
+  userId?: number
+): Promise<void> {
   const content = req.body.content;
   const noteId = req.query.noteId;
 
@@ -99,11 +96,10 @@ async function updateNoteContent(req: NextApiRequest): Promise<void> {
 
 /**
  * @param {NextApiRequest} req
+ * @param {number | undefined} userId
  * @return {Promise<void>}
  */
-async function deleteNote(req: NextApiRequest): Promise<void> {
-  const session = await getSession({ req });
-  const userId = session?.userId;
+async function deleteNote(req: NextApiRequest, userId?: number): Promise<void> {
   const noteId = req.query.noteId;
 
   await excuteQuery({
