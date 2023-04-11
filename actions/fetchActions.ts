@@ -2,12 +2,6 @@ import { Category } from "@/domain/models/category";
 import { Note } from "@/domain/models/note";
 import axios from "axios";
 
-type Response = {
-  success: boolean;
-  message?: string;
-  data: Category[];
-};
-
 export const createNote = async ({ title }: Partial<Note>): Promise<void> => {
   try {
     await axios.post("/api/notes", { title });
@@ -20,7 +14,9 @@ export const createNote = async ({ title }: Partial<Note>): Promise<void> => {
 
 export const createCategory = async ({
   title,
-}: Partial<Category>): Promise<void> => {
+}: {
+  title: string;
+}): Promise<void> => {
   try {
     await axios.post("/api/categories", { title });
   } catch (error) {
@@ -30,28 +26,27 @@ export const createCategory = async ({
   }
 };
 
-export const updateNoteContent = async (
+export const updateNote = async (
   noteId: number,
-  content: string
+  note: Partial<Note>
 ): Promise<void> => {
   try {
-    await axios.put(`/api/notes/${noteId}`, { content });
+    await axios.put(`/api/notes/${noteId}`, note);
   } catch (error) {
     throw new Error(
-      "something went wrong when updating note content, please try it again later"
+      "something went wrong when updating note, please try it again later"
     );
   }
 };
 
-export const getCategoryWithNote = async (): Promise<Category[]> => {
+export const getCategories = async (): Promise<Category[]> => {
   try {
-    const categoriesJson = await fetch("/api/overview");
-    const categories: Response = await categoriesJson.json();
+    const { data } = await axios.get("api/overview");
 
-    return categories.data;
+    return data.data;
   } catch (error) {
     throw new Error(
-      "something went wrong when getting category with note, please try it again later"
+      "something went wrong when getting categories, please try it again later"
     );
   }
 };

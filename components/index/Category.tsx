@@ -1,6 +1,6 @@
-import Note from "@/components/note/Note";
+import Note from "@/components/index/Note";
 import { Note as DomainNote } from "@/domain/models/note";
-import { Category } from "@/domain/models/category";
+import { Category as DomainCategory } from "@/domain/models/category";
 import React from "react";
 import { styled } from "@linaria/react";
 import { DropTargetMonitor, useDrop } from "react-dnd";
@@ -23,7 +23,7 @@ const NoteContainer = styled.div`
 `;
 
 type CategoryProps = {
-  category: Category;
+  category: DomainCategory;
   onMoveNote: (
     from: { categoryId: number | null; index: number },
     to: { categoryId: number | null; index: number }
@@ -31,7 +31,7 @@ type CategoryProps = {
   onDeleteNote: ({ id, title }: Pick<DomainNote, "id" | "title">) => void;
 };
 
-export const CategoryNote = ({
+export const Category = ({
   category,
   onDeleteNote,
   onMoveNote,

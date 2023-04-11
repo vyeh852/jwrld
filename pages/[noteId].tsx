@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { styled } from "@linaria/react";
 import { getNote } from "@/pages/api/notes/[noteId]";
-import { updateNoteContent } from "@/actions/fetchActions";
+import { updateNote } from "@/actions/fetchActions";
 import { useRouter } from "next/router";
 import Layout, { PreviewTypeContext } from "@/components/Layout";
-import Preview from "@/components/note/Preview";
-import Editor from "@/components/note/Editor";
+import Preview from "@/components/edit/Preview";
+import Editor from "@/components/edit/Editor";
 import { GetServerSideProps } from "next";
 import { getUserSession } from "@/pages/api/auth/[...nextauth]";
+import { useDebounce } from "@/hooks/useDebounce";
 
 const Container = styled.div`
   display: flex;
@@ -135,13 +136,11 @@ export default function Note({
   const router = useRouter();
   const { noteId } = router.query;
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      updateNoteContent(noteId, noteContent);
-    }, 2000);
+  const debouncedNoteContent = useDebounce(noteContent, 2000);
 
-    return () => clearTimeout(timer);
-  }, [noteContent]);
+  useEffect(() => {
+    updateNote(noteId, { content: debouncedNoteContent });
+  }, [debouncedNoteContent]);
 
   return (
     <Layout>

@@ -1,4 +1,8 @@
-function snakeToCamel(string) {
+/**
+ * @param {string} string
+ * @return {string}
+ */
+function snakeToCamel(string: string) {
   const splitStringArr = string.split("_");
   const builtStr = splitStringArr.reduce((acc, curr, i) => {
     curr = i !== 0 ? curr[0].toUpperCase() + curr.slice(1) : curr;
@@ -7,8 +11,11 @@ function snakeToCamel(string) {
   return builtStr;
 }
 
-// Convert JSON | Number | String to required camelCase format
-export function nestedToJsCase<T>(data) {
+/**
+ * @param {T} data
+ * @return {T}
+ */
+export function nestedToJsCase<T>(data: unknown) {
   let returnValue: unknown = data;
   if (Array.isArray(data)) {
     returnValue = data.map(nestedToJsCase);

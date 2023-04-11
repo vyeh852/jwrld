@@ -36,7 +36,7 @@ export default async function overviewHandler(
       try {
         const session = await getUserSession(req, res);
         const userId = session?.userId;
-        const categoryWithNote = await getCategoryWithNote(userId);
+        const categoryWithNote = await getCategories(userId);
 
         res.status(200).json({
           success: true,
@@ -55,7 +55,7 @@ export default async function overviewHandler(
  * @param {number | undefined} userId
  * @return {NetCategoryResponse[]}
  */
-export async function getCategoryWithNote(
+export async function getCategories(
   userId?: number
 ): Promise<NetCategoryResponse[]> {
   const categoryWithNote = await excuteQuery<NetCategoryWithNote[]>({

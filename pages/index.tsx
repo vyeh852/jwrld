@@ -1,8 +1,8 @@
 import React from "react";
-import IndexPage from "@/components/home/index";
-import OverView from "@/components/home/Overview";
+import IndexPage from "@/components/index/IndexPage";
+import OverView from "@/components/index/Overview";
 import { Session } from "next-auth";
-import { getCategoryWithNote } from "@/pages/api/overview";
+import { getCategories } from "@/pages/api/overview";
 import { Category } from "@/domain/models/category";
 import Layout from "@/components/Layout";
 import { getUserSession } from "@/pages/api/auth/[...nextauth]";
@@ -33,7 +33,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   const session = await getUserSession(req, res);
 
   if (session) {
-    const categories = await getCategoryWithNote(session.userId);
+    const categories = await getCategories(session.userId);
 
     return {
       props: {

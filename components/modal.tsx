@@ -1,5 +1,6 @@
 import React, { ReactNode, useEffect } from "react";
 import { styled } from "@linaria/react";
+import classNames from "classnames";
 
 const ModalContainer = styled.div`
   display: none;
@@ -85,12 +86,14 @@ export default function Modal(props: ModalProps) {
     };
   }, [show]);
 
-  const className = ["modal", show && "show"].filter(Boolean).join(" ");
-
   return (
     <>
       <Backdrop show={show} onClose={onClose} />
-      <ModalContainer className={className}>
+      <ModalContainer
+        className={classNames("modal", {
+          show,
+        })}
+      >
         <div className="modal-title">{title}</div>
         <div className="modal-container">{children}</div>
         <div className="button-group">
