@@ -169,7 +169,16 @@ export const getServerSideProps: GetServerSideProps = async ({
   params,
 }) => {
   const session = await getUserSession(req, res);
-  const noteContent = await getNote(req, params.noteId, session?.userId);
+  if (!session) {
+    return {
+      redirect: {
+        destination: "/api/auth/signin",
+        permanent: false,
+      },
+    };
+  }
+
+  const noteContent = await getNote(req, params.noteId, session.userId);
 
   if (noteContent === undefined) {
     return {
