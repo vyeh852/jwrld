@@ -31,11 +31,14 @@ const Container = styled.div`
       background-color: #f7f7f7;
       > div {
         background-color: #f7f7f7 !important;
+        padding: 0 !important;
+        margin: 0 !important;
       }
     }
     code {
       white-space: pre-wrap;
       background-color: #f7f7f7;
+      font-family: monospace !important;
     }
     a {
       color: #337ab7;
