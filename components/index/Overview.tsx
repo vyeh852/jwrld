@@ -108,6 +108,7 @@ export default function OverView({
         {showInput && (
           <input
             type="text"
+            value={content}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               dispatchModal({
                 type: ActionType.EditContent,

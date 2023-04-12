@@ -12,6 +12,9 @@ const NoteContainer = styled.div`
     border-top: 1px solid #dadce0;
     border-left: 1px solid #dadce0;
     border-right: 1px solid #dadce0;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
     &:last-child {
       border-bottom: 1px solid #dadce0;
     }
@@ -70,7 +73,10 @@ export const Category = ({
   });
 
   return (
-    <div ref={dropRef} style={{ background: isOver ? "#eee" : "transparent" }}>
+    <div
+      ref={dropRef}
+      style={{ minWidth: "150px", background: isOver ? "#eee" : "transparent" }}
+    >
       <p className="category-title">{category.name}</p>
       <NoteContainer>
         {category.notes.map((note, index) => (

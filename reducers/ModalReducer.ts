@@ -57,7 +57,7 @@ export const initialState: State = {
 export const reducer: Reducer<State, Action> = (state, action) => {
   switch (action.type) {
     case ActionType.CloseModal:
-      return { ...state, show: false };
+      return { ...state, show: false, content: "" };
     case ActionType.EditContent:
       return { ...state, content: action.payload };
     case ActionType.CreateNote:
