@@ -23,6 +23,8 @@ const OverviewContainer = styled.div`
 
 const Container = styled.div`
   &&& {
+    height: calc(100vh - 50px);
+    overflow: auto;
     padding: 15px;
     flex: 1;
     > div {

@@ -4,7 +4,6 @@ import { styled } from "@linaria/react";
 const SettingsPanelContainer = styled.div`
   flex: 0 0 200px;
   background: #fbfbfa;
-  height: 100vh;
   padding: 10px;
   @media (max-width: 768px) {
     display: none;
