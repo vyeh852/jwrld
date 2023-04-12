@@ -7,6 +7,9 @@ import { DropTargetMonitor, useDrop } from "react-dnd";
 import { ItemTypes } from "@/constant/draggableItem";
 
 const NoteContainer = styled.div`
+  @media (min-width: 768px) {
+    margin: 15px;
+  }
   > div {
     padding: 15px;
     border-top: 1px solid #dadce0;

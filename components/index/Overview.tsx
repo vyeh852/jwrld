@@ -22,21 +22,26 @@ const OverviewContainer = styled.div`
 `;
 
 const Container = styled.div`
-  padding: 15px;
-  flex: 1;
-  > div,
-  .category-title {
-    margin-bottom: 15px;
-  }
-  @media (min-width: 768px) {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-  }
+  &&& {
+    padding: 15px;
+    flex: 1;
+    > div {
+      margin-bottom: 15px;
+    }
+    @media (min-width: 768px) {
+      display: flex;
+      flex-wrap: wrap;
+      .category-title {
+        padding: 0 15px;
+      }
+    }
 
-  .category-title {
-    font-size: 20px;
-    font-weight: 700;
+    .category-title {
+      margin-bottom: 15px;
+      font-size: 20px;
+      font-weight: 700;
+      background: #fff;
+    }
   }
 `;
 
