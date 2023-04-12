@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { styled } from "@linaria/react";
 import { getNote } from "@/pages/api/notes/[noteId]";
 import { updateNote } from "@/actions/fetchActions";
@@ -138,10 +138,15 @@ export default function Note({
   const [noteContent, setNoteContent] = useState(initialNoteContent);
   const router = useRouter();
   const { noteId } = router.query;
-
+  const firstLoad = useRef(true);
   const debouncedNoteContent = useDebounce(noteContent, 2000);
 
   useEffect(() => {
+    if (firstLoad.current) {
+      firstLoad.current = false;
+      return;
+    }
+
     updateNote(noteId, { content: debouncedNoteContent });
   }, [debouncedNoteContent]);
 
