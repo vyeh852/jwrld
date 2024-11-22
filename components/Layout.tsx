@@ -1,5 +1,5 @@
 import React, { createContext, useState } from "react";
-import Header from "@/components/Header";
+import Header from "@/components/header";
 
 export enum PreviewType {
   Editing = "editing",
@@ -20,7 +20,6 @@ export default function Layout({
   return (
     <>
       <Header
-        previewType={previewType}
         onChoosePreviewType={(previewType) => setPreviewType(previewType)}
       />
       <PreviewTypeContext.Provider value={previewType}>
