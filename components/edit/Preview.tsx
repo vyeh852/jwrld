@@ -17,41 +17,50 @@ const MarkdownResult = styled(ReactMarkdown)`
   margin: auto;
   width: 100%;
   max-width: 750px;
+
   img {
     max-width: 100%;
     vertical-align: middle;
   }
+
   pre {
     margin-bottom: 16px;
     padding: 20px;
     background-color: #f7f7f7;
+
+    // for syntaxed-code-block
     > div {
       background-color: #f7f7f7 !important;
       padding: 0 !important;
       margin: 0 !important;
     }
   }
+
   code {
     white-space: pre-wrap;
     background-color: #f7f7f7;
     font-family: monospace !important;
   }
+
   a {
     color: #337ab7;
     text-decoration: none;
     word-wrap: break-word;
   }
+
   ul,
   ol {
     margin-bottom: 16px;
     line-height: 25px;
     padding-left: 32px;
   }
+
   h1 {
     border-bottom: 1px solid #eee;
     margin-bottom: 16px;
     padding-bottom: 10px;
   }
+
   h2 {
     padding-bottom: 10px;
     border-bottom: 1px solid #eee;
@@ -64,12 +73,15 @@ const MarkdownResult = styled(ReactMarkdown)`
     margin-top: 24px;
     margin-bottom: 16px;
   }
+
   p {
     margin-bottom: 16px;
   }
+
   li > p {
     margin-top: 16px;
   }
+
   hr {
     height: 0.25em;
     padding: 0;
@@ -77,14 +89,17 @@ const MarkdownResult = styled(ReactMarkdown)`
     background-color: #e7e7e7;
     border: 0;
   }
+
   blockquote {
     border-left: 0.25em solid #ddd;
     color: #777;
     padding: 0 1em;
+
     > p {
       white-space: break-spaces;
     }
   }
+
   table {
     table-layout: fixed;
     width: 100%;
@@ -92,11 +107,13 @@ const MarkdownResult = styled(ReactMarkdown)`
     margin-bottom: 16px;
     border-spacing: 0;
     border-collapse: collapse;
+
     th,
     td {
       border: 1px solid #ddd;
       padding: 6px;
     }
+
     tr:nth-child(2n) {
       background-color: #f8f8f8;
     }
@@ -112,16 +129,34 @@ export default function Preview({ noteContent }: PreviewProps): JSX.Element {
     <MarkdownResult
       className="markdown-result"
       components={{
-        code({ inline, className, children, style, ...props }) {
-          const match = /language-(\w+)/.exec(className || "");
-          return !inline && match ? (
-            <SyntaxHighlighter language={match[1]} PreTag="div" {...props}>
-              {String(children).replace(/\n$/, "")}
+        code({ inline, className, children }) {
+          const getParsedChildren = (): string => {
+            const parsedChildren = Array.isArray(children)
+              ? children.at(0)
+              : children;
+
+            return typeof parsedChildren === "string" ? parsedChildren : "";
+          };
+
+          const getLanguageSyntax = () => {
+            if (!className) return;
+
+            const match = className.match(/language-(\w+)/);
+            if (!match) return;
+
+            return match[1];
+          };
+
+          const languageSyntax = getLanguageSyntax();
+
+          if (inline || !languageSyntax) {
+            return <code>{getParsedChildren()}</code>;
+          }
+
+          return (
+            <SyntaxHighlighter language={languageSyntax} PreTag="div">
+              {getParsedChildren()}
             </SyntaxHighlighter>
-          ) : (
-            <code className={className} {...props}>
-              {children}
-            </code>
           );
         },
       }}
