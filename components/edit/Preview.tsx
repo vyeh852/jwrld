@@ -1,8 +1,8 @@
 import React from "react";
 import ReactMarkdown from "react-markdown";
-import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import remarkGfm from "remark-gfm";
 import { styled } from "@linaria/react";
+import CodeBlock from "@/components/edit/CodeBlock";
 
 type PreviewProps = {
   noteContent: string;
@@ -129,36 +129,7 @@ export default function Preview({ noteContent }: PreviewProps): JSX.Element {
     <MarkdownResult
       className="markdown-result"
       components={{
-        code({ inline, className, children }) {
-          const getParsedChildren = (): string => {
-            const parsedChildren = Array.isArray(children)
-              ? children.at(0)
-              : children;
-
-            return typeof parsedChildren === "string" ? parsedChildren : "";
-          };
-
-          const getLanguageSyntax = () => {
-            if (!className) return;
-
-            const match = className.match(/language-(\w+)/);
-            if (!match) return;
-
-            return match[1];
-          };
-
-          const languageSyntax = getLanguageSyntax();
-
-          if (inline || !languageSyntax) {
-            return <code>{getParsedChildren()}</code>;
-          }
-
-          return (
-            <SyntaxHighlighter language={languageSyntax} PreTag="div">
-              {getParsedChildren()}
-            </SyntaxHighlighter>
-          );
-        },
+        code: CodeBlock,
       }}
       remarkPlugins={[remarkGfm]}
     >
