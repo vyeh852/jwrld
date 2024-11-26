@@ -1,8 +1,13 @@
 import excuteQuery from "@/lib/db";
-import NextAuth, { getServerSession } from "next-auth";
+import {
+  GetServerSidePropsContext,
+  NextApiRequest,
+  NextApiResponse,
+} from "next";
+import NextAuth, { NextAuthOptions, getServerSession } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 
-export default NextAuth({
+const authOptions: NextAuthOptions = {
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID as string,
@@ -42,10 +47,15 @@ export default NextAuth({
       return token;
     },
   },
-});
+};
 
-export const getUserSession = async (req, res, nextAuth = NextAuth) => {
-  const session = await getServerSession(req, res, nextAuth);
+export default NextAuth(authOptions);
+
+export const getUserSession = async (
+  req: NextApiRequest | GetServerSidePropsContext["req"],
+  res: NextApiResponse | GetServerSidePropsContext["res"]
+) => {
+  const session = await getServerSession(req, res, authOptions);
   if (!session) return;
 
   const userId = await excuteQuery<Array<{ id: number }>>({

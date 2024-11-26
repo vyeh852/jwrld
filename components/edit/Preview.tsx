@@ -4,10 +4,6 @@ import remarkGfm from "remark-gfm";
 import { styled } from "@linaria/react";
 import CodeBlock from "@/components/edit/CodeBlock";
 
-type PreviewProps = {
-  noteContent: string;
-};
-
 const MarkdownResult = styled(ReactMarkdown)`
   flex: 1 1 50%;
   min-width: 0;
@@ -120,11 +116,15 @@ const MarkdownResult = styled(ReactMarkdown)`
   }
 `;
 
+interface PreviewProps {
+  noteContent: string;
+}
+
 /**
- * Note Preview
+ * @param {PreviewProps} props
  * @return {JSX.Element}
  */
-export default function Preview({ noteContent }: PreviewProps): JSX.Element {
+const Preview = ({ noteContent }: PreviewProps): JSX.Element => {
   return (
     <MarkdownResult
       className="markdown-result"
@@ -136,4 +136,6 @@ export default function Preview({ noteContent }: PreviewProps): JSX.Element {
       {noteContent}
     </MarkdownResult>
   );
-}
+};
+
+export default Preview;

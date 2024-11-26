@@ -33,7 +33,6 @@ const Container = styled.div`
 `;
 
 /**
- * Note Page
  * @return {JSX.Element}
  */
 export default function Note({
@@ -53,7 +52,9 @@ export default function Note({
       return;
     }
 
-    updateNote(noteId, { content: debouncedNoteContent });
+    if (typeof noteId === "string") {
+      updateNote(noteId, { content: debouncedNoteContent });
+    }
   }, [debouncedNoteContent]);
 
   return (
@@ -73,9 +74,6 @@ export default function Note({
   );
 }
 
-/**
- * fetch note content
- */
 export const getServerSideProps: GetServerSideProps = async ({
   req,
   res,
@@ -88,6 +86,12 @@ export const getServerSideProps: GetServerSideProps = async ({
         destination: "/api/auth/signin",
         permanent: false,
       },
+    };
+  }
+
+  if (typeof params?.noteId !== "string") {
+    return {
+      notFound: true,
     };
   }
 

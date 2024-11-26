@@ -24,19 +24,19 @@ const Textarea = styled.div`
   }
 `;
 
-type EditorProps = {
+interface EditorProps {
   noteContent: string;
   onChangeNoteContent: (noteContent: string) => void;
-};
+}
 
 /**
- * Note Editor
+ * @param {EditorProps} props
  * @return {JSX.Element}
  */
-export default function Editor({
+const Editor = ({
   noteContent,
   onChangeNoteContent,
-}: EditorProps): JSX.Element {
+}: EditorProps): JSX.Element => {
   return (
     <Textarea className="code-mirror">
       <CodeMirror
@@ -57,4 +57,6 @@ export default function Editor({
       />
     </Textarea>
   );
-}
+};
+
+export default Editor;

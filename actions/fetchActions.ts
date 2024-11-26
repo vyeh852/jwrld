@@ -27,7 +27,7 @@ export const createCategory = async ({
 };
 
 export const updateNote = async (
-  noteId: number,
+  noteId: string,
   note: Partial<Note>
 ): Promise<void> => {
   try {

@@ -1,5 +1,5 @@
 import React, { createContext, useState } from "react";
-import Header from "@/components/header";
+import Header from "@/components/Header";
 
 export enum PreviewType {
   Editing = "editing",
@@ -11,11 +11,7 @@ export const PreviewTypeContext = createContext(PreviewType.Reading);
 /**
  * @return {JSX.Element}
  */
-export default function Layout({
-  children,
-}: {
-  children: JSX.Element;
-}): JSX.Element {
+const Layout = ({ children }: { children: JSX.Element }): JSX.Element => {
   const [previewType, setPreviewType] = useState(PreviewType.Reading);
   return (
     <>
@@ -27,4 +23,6 @@ export default function Layout({
       </PreviewTypeContext.Provider>
     </>
   );
-}
+};
+
+export default Layout;

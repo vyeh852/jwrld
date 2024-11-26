@@ -54,16 +54,15 @@ const PreviewButton = styled(Button)<{ $active?: boolean }>`
   border-radius: 0;
 `;
 
-type HeaderProps = {
+interface HeaderProps {
   onChoosePreviewType: (previewType: PreviewType) => void;
-};
+}
 
 /**
+ * @param {HeaderProps} props
  * @return {JSX.Element}
  */
-export default function Header({
-  onChoosePreviewType,
-}: HeaderProps): JSX.Element {
+const Header = ({ onChoosePreviewType }: HeaderProps): JSX.Element => {
   const { data: session } = useSession();
   const router = useRouter();
   const showPreviewButton = router.query.noteId;
@@ -90,4 +89,6 @@ export default function Header({
       )}
     </HeaderContainer>
   );
-}
+};
+
+export default Header;

@@ -60,22 +60,28 @@ const BackDropContainer = styled.div`
   background-color: rgba(0, 0, 0, 0.5);
 `;
 
-export type ModalProps = {
+interface BackdropProps {
+  show: boolean;
+  onClose: React.MouseEventHandler;
+}
+
+const Backdrop = ({ show, onClose }: BackdropProps): JSX.Element | null => {
+  return show ? <BackDropContainer onClick={onClose} /> : null;
+};
+
+interface ModalProps {
   show: boolean;
   onClose: React.MouseEventHandler;
   onConfirm: React.MouseEventHandler;
   children: ReactNode;
   title: string;
-};
+}
 
 /**
- *
- * @param {modalProps} props
+ * @param {ModalProps} props
  * @return {JSX.Element}
  */
-export default function Modal(props: ModalProps) {
-  const { show, onConfirm, onClose, children, title } = props;
-
+const Modal = ({ show, onConfirm, onClose, children, title }: ModalProps) => {
   useEffect(() => {
     document.getElementsByClassName("modal show").length > 0
       ? (document.body.style.overflow = "hidden")
@@ -107,13 +113,6 @@ export default function Modal(props: ModalProps) {
       </ModalContainer>
     </>
   );
-}
-
-type BackdropProps = {
-  show: boolean;
-  onClose: React.MouseEventHandler;
 };
 
-const Backdrop = ({ show, onClose }: BackdropProps): JSX.Element | null => {
-  return show ? <BackDropContainer onClick={onClose} /> : null;
-};
+export default Modal;

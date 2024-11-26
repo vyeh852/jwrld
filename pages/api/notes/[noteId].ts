@@ -23,9 +23,11 @@ export default async function noteHandler(
     case "GET":
       try {
         const { noteId } = req.query;
-        const noteContent = await getNote(noteId, userId);
+        if (typeof noteId === "string") {
+          const noteContent = await getNote(noteId, userId);
 
-        res.status(200).json({ success: true, message: noteContent });
+          res.status(200).json({ success: true, message: noteContent });
+        }
       } catch (error) {
         res.status(422).json({ success: false });
       }
@@ -56,12 +58,12 @@ export default async function noteHandler(
 /**
  * @param {string} noteId
  * @param {number | undefined} userId
- * @return {string}
+ * @return {string | undefined}
  */
 export async function getNote(
   noteId: string,
   userId?: number
-): Promise<string> {
+): Promise<string | undefined> {
   const notes = await excuteQuery<NetNote[]>({
     query: `
            SELECT content FROM notes WHERE id = ? AND user_id = ?

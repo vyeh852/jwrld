@@ -9,7 +9,6 @@ import { getUserSession } from "@/pages/api/auth/[...nextauth]";
 import { GetServerSideProps } from "next";
 
 /**
- * Home Page of the Application
  * @return {JSX.Element}
  */
 export default function Index({
