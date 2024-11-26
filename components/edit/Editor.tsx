@@ -12,6 +12,7 @@ const Textarea = styled.div`
   height: calc(100vh - 50px);
   font-size: 15px;
   overflow: auto;
+
   .cm-theme-light,
   .cm-editor,
   .cm-theme {

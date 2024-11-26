@@ -13,6 +13,7 @@ export const PreviewTypeContext = createContext(PreviewType.Reading);
  */
 const Layout = ({ children }: { children: JSX.Element }): JSX.Element => {
   const [previewType, setPreviewType] = useState(PreviewType.Reading);
+
   return (
     <>
       <Header

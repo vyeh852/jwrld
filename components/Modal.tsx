@@ -1,9 +1,7 @@
 import React, { ReactNode, useEffect } from "react";
 import { styled } from "@linaria/react";
-import classNames from "classnames";
 
 const ModalContainer = styled.div`
-  display: none;
   position: fixed;
   transition: all 0.3s ease-out;
   top: 15%;
@@ -13,41 +11,43 @@ const ModalContainer = styled.div`
   background-color: #ffffff;
   z-index: 500;
   border-radius: 6px;
-  &.show {
-    display: block;
-  }
-  > .modal-title {
-    padding: 8px 15px;
-    background-color: #f8f8f8;
-    border-top-left-radius: 6px;
-    border-top-right-radius: 6px;
-  }
-  > .modal-container {
-    padding: 8px;
-  }
-  .button-group {
-    padding: 0 8px 8px 8px;
-    display: flex;
-    flex-direction: row-reverse;
-    > .confirm {
-      padding: 5px;
-      border-radius: 4px;
-      color: #fff;
-      background-color: #d9534f;
-      border-color: #d43f3a;
-      cursor: pointer;
-    }
-    > .cancel {
-      border: 1px solid transparent;
-      padding: 5px;
-      border-radius: 4px;
-      color: #333;
-      background-color: #fff;
-      border-color: #ccc;
-      cursor: pointer;
-      margin-right: 5px;
-    }
-  }
+`;
+
+const ModalTitle = styled.div`
+  padding: 8px 15px;
+  background-color: #f8f8f8;
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+`;
+
+const ModalContent = styled.div`
+  padding: 8px;
+`;
+
+const ButtonGroup = styled.div`
+  padding: 0 8px 8px 8px;
+  display: flex;
+  flex-direction: row-reverse;
+`;
+
+const ConfirmButton = styled.div`
+  padding: 5px;
+  border-radius: 4px;
+  color: #fff;
+  background-color: #d9534f;
+  border-color: #d43f3a;
+  cursor: pointer;
+`;
+
+const CancelButton = styled.div`
+  border: 1px solid transparent;
+  padding: 5px;
+  border-radius: 4px;
+  color: #333;
+  background-color: #fff;
+  border-color: #ccc;
+  cursor: pointer;
+  margin-right: 5px;
 `;
 
 const BackDropContainer = styled.div`
@@ -61,12 +61,11 @@ const BackDropContainer = styled.div`
 `;
 
 interface BackdropProps {
-  show: boolean;
   onClose: React.MouseEventHandler;
 }
 
-const Backdrop = ({ show, onClose }: BackdropProps): JSX.Element | null => {
-  return show ? <BackDropContainer onClick={onClose} /> : null;
+const Backdrop = ({ onClose }: BackdropProps): JSX.Element | null => {
+  return <BackDropContainer onClick={onClose} />;
 };
 
 interface ModalProps {
@@ -92,24 +91,20 @@ const Modal = ({ show, onConfirm, onClose, children, title }: ModalProps) => {
     };
   }, [show]);
 
+  if (!show) {
+    return null;
+  }
+
   return (
     <>
-      <Backdrop show={show} onClose={onClose} />
-      <ModalContainer
-        className={classNames("modal", {
-          show,
-        })}
-      >
-        <div className="modal-title">{title}</div>
-        <div className="modal-container">{children}</div>
-        <div className="button-group">
-          <div className="confirm" onClick={onConfirm}>
-            Confirm
-          </div>
-          <div className="cancel" onClick={onClose}>
-            Cancel
-          </div>
-        </div>
+      <Backdrop onClose={onClose} />
+      <ModalContainer>
+        <ModalTitle>{title}</ModalTitle>
+        <ModalContent>{children}</ModalContent>
+        <ButtonGroup>
+          <ConfirmButton onClick={onConfirm}>Confirm</ConfirmButton>
+          <CancelButton onClick={onClose}>Cancel</CancelButton>
+        </ButtonGroup>
       </ModalContainer>
     </>
   );
