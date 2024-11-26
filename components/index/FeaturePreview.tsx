@@ -1,10 +1,10 @@
 import React from "react";
 import { styled } from "@linaria/react";
-import classNames from "classnames";
 
 const Container = styled.div`
   position: relative;
   margin: 0 15px;
+
   img {
     transition: opacity 0.25s ease-in-out;
     position: absolute;
@@ -13,7 +13,8 @@ const Container = styled.div`
     opacity: 0;
     width: 100%;
     height: auto;
-    &.active {
+
+    &[data-active="active"] {
       opacity: 1;
     }
   }
@@ -37,7 +38,7 @@ export default function FeaturePreview({
         <img
           src={imageSrc}
           key={index}
-          className={classNames({ active: index === activeIndex })}
+          data-active={index === activeIndex ? "active" : undefined}
         />
       ))}
     </Container>

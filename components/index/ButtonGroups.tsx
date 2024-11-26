@@ -1,6 +1,5 @@
 import React, { ReactNode } from "react";
 import { styled } from "@linaria/react";
-import classNames from "classnames";
 
 const Container = styled.div`
   margin-bottom: 35px;
@@ -26,7 +25,7 @@ const ButtonContainer = styled.div`
     font-size: 15px;
   }
 
-  &.active {
+  &[data-active="active"] {
     border-radius: 6px;
     box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
     color: #333;
@@ -39,7 +38,7 @@ type ButtonGroupsProps = {
 };
 
 type ButtonProps = {
-  isActive: boolean;
+  active: boolean;
   onActiveButton: () => void;
   children: ReactNode;
 };
@@ -55,7 +54,7 @@ export default function ButtonGroups({
     <Container className="button-groups">
       <h1>快速且方便的建立你的筆記吧</h1>
       <Button
-        isActive={activeIndex === 0}
+        active={activeIndex === 0}
         onActiveButton={() => setActiveIndex(0)}
       >
         <i aria-hidden className="fa fa-pencil" />
@@ -63,7 +62,7 @@ export default function ButtonGroups({
         <p className="content">待辦事項、技術筆記、畫流程圖、甚至簡報</p>
       </Button>
       <Button
-        isActive={activeIndex === 1}
+        active={activeIndex === 1}
         onActiveButton={() => setActiveIndex(1)}
       >
         <i aria-hidden className="fa fa-folder-open-o" />
@@ -78,13 +77,13 @@ export default function ButtonGroups({
  * @return {JSX.Element}
  */
 function Button({
-  isActive,
+  active,
   onActiveButton,
   children,
 }: ButtonProps): JSX.Element {
   return (
     <ButtonContainer
-      className={classNames({ active: isActive })}
+      data-active={active ? "active" : undefined}
       onClick={onActiveButton}
       onMouseEnter={onActiveButton}
     >
