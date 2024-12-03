@@ -1,5 +1,4 @@
-import { NetNote } from "@/domain/remote/netNote";
-import excuteQuery from "@/lib/db";
+import prisma from "@/lib/db";
 import { getUserSession } from "@/pages/api/auth/[...nextauth]";
 import type { NextApiRequest, NextApiResponse } from "next";
 
@@ -26,7 +25,9 @@ export default async function noteHandler(
         if (typeof noteId === "string") {
           const noteContent = await getNote(noteId, userId);
 
-          res.status(200).json({ success: true, message: noteContent });
+          if (noteContent) {
+            res.status(200).json({ success: true, message: noteContent });
+          }
         }
       } catch (error) {
         res.status(422).json({ success: false });
@@ -58,22 +59,23 @@ export default async function noteHandler(
 /**
  * @param {string} noteId
  * @param {number | undefined} userId
- * @return {string | undefined}
+ * @return {string | undefined | null}
  */
 export async function getNote(
   noteId: string,
   userId?: number
-): Promise<string | undefined> {
-  const notes = await excuteQuery<NetNote[]>({
-    query: `
-           SELECT content FROM notes WHERE id = ? AND user_id = ?
-          `,
-    values: [noteId, userId],
+): Promise<string | undefined | null> {
+  const note = await prisma.note.findFirst({
+    where: {
+      id: Number(noteId),
+      user_id: userId,
+    },
+    select: {
+      content: true,
+    },
   });
 
-  const noteContent = notes[0]?.content;
-
-  return noteContent;
+  return note?.content;
 }
 
 /**
@@ -88,11 +90,14 @@ async function updateNoteContent(
   const content = req.body.content;
   const noteId = req.query.noteId;
 
-  await excuteQuery({
-    query: `
-           UPDATE notes SET content = ? WHERE id = ? AND user_id = ?
-          `,
-    values: [content, noteId, userId],
+  await prisma.note.update({
+    where: {
+      id: Number(noteId),
+      user_id: userId,
+    },
+    data: {
+      content: content,
+    },
   });
 }
 
@@ -102,12 +107,16 @@ async function updateNoteContent(
  * @return {Promise<void>}
  */
 async function deleteNote(req: NextApiRequest, userId?: number): Promise<void> {
-  const noteId = req.query.noteId;
+  const noteId = Number(req.query.noteId);
 
-  await excuteQuery({
-    query: `
-           DELETE FROM notes WHERE id = ? AND user_id = ?
-          `,
-    values: [noteId, userId],
+  if (!userId) {
+    throw new Error("User ID is required");
+  }
+
+  await prisma.note.deleteMany({
+    where: {
+      id: noteId,
+      user_id: userId,
+    },
   });
 }

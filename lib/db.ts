@@ -1,33 +1,18 @@
-import mysql from "serverless-mysql";
+import { PrismaClient } from "@prisma/client";
+import { withAccelerate } from "@prisma/extension-accelerate";
 
-type Query = {
-  query: string;
-  values: Array<unknown>;
+// Learn more about instantiating PrismaClient in Next.js here: https://www.prisma.io/docs/data-platform/accelerate/getting-started
+
+const prismaClientSingleton = () => {
+  return new PrismaClient().$extends(withAccelerate());
 };
 
-const db = mysql({
-  config: {
-    host: process.env.MYSQL_HOST,
-    port: Number(process.env.MYSQL_PORT),
-    database: process.env.MYSQL_DATABASE,
-    user: process.env.MYSQL_USER,
-    password: process.env.MYSQL_PASSWORD,
-  },
-});
+declare const globalThis: {
+  prismaGlobal: ReturnType<typeof prismaClientSingleton>;
+} & typeof global;
 
-/**
- * @param {string} query
- * @param {Array<unknown>} values
- */
-export default async function excuteQuery<T>({
-  query,
-  values,
-}: Query): Promise<T> {
-  try {
-    const results = await db.query<T>(query, values);
-    await db.end();
-    return results;
-  } catch (error) {
-    throw new Error();
-  }
-}
+const prisma = globalThis.prismaGlobal ?? prismaClientSingleton();
+
+export default prisma;
+
+if (process.env.NODE_ENV !== "production") globalThis.prismaGlobal = prisma;

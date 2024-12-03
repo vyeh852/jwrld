@@ -1,4 +1,4 @@
-import excuteQuery from "@/lib/db";
+import prisma from "@/lib/db";
 import { getUserSession } from "@/pages/api/auth/[...nextauth]";
 import type { NextApiRequest, NextApiResponse } from "next";
 
@@ -21,9 +21,15 @@ async function categoriesHandler(
         const session = await getUserSession(req, res);
         const title: string = req.body.title;
 
-        await excuteQuery({
-          query: "INSERT INTO categories (name, user_id) VALUES(?, ?)",
-          values: [title, session?.userId],
+        if (!session?.userId) {
+          throw new Error("User ID is required");
+        }
+
+        await prisma.category.create({
+          data: {
+            name: title,
+            user_id: session.userId,
+          },
         });
 
         res.status(200).json({ success: true });

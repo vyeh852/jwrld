@@ -1,5 +1,5 @@
 import { NetNote } from "@/domain/remote/netNote";
-import excuteQuery from "@/lib/db";
+import prisma from "@/lib/db";
 import { getUserSession } from "@/pages/api/auth/[...nextauth]";
 import type { NextApiRequest, NextApiResponse } from "next";
 
@@ -13,14 +13,6 @@ type Response = {
   success: boolean;
   message?: string;
   data?: NetCategoryResponse[];
-};
-
-type NetCategoryWithNote = {
-  category_name: string | null;
-  note_title: string;
-  note_content: string;
-  note_id: number;
-  category_id: number | null;
 };
 
 /**
@@ -58,59 +50,55 @@ export default async function overviewHandler(
 export async function getCategories(
   userId?: number
 ): Promise<NetCategoryResponse[]> {
-  const categoryWithNote = await excuteQuery<NetCategoryWithNote[]>({
-    query: `
-         SELECT categories.id AS category_id, notes.id AS note_id, name AS category_name, title AS note_title 
-         FROM categories 
-         LEFT JOIN notes ON categories.id = notes.category_id 
-         WHERE categories.user_id = ?
-         UNION 
-         SELECT categories.id AS category_id, notes.id AS note_id, name as category_name, title AS note_title
-         FROM notes 
-         LEFT JOIN categories ON categories.id = notes.category_id 
-         WHERE notes.category_id IS NULL AND notes.user_id = ?
-        `,
-    values: [userId, userId],
+  const categoriesWithNotes = await prisma.category.findMany({
+    where: {
+      user_id: userId,
+    },
+    include: {
+      notes: {
+        select: {
+          id: true,
+          title: true,
+        },
+      },
+    },
   });
 
-  return createToNetCategoryResponse(categoryWithNote);
-}
-
-const createToNetCategoryResponse = (
-  categoryWithNote: NetCategoryWithNote[]
-): NetCategoryResponse[] => {
-  const result = categoryWithNote.reduce<NetCategoryResponse[]>(
-    (acc, cur) => {
-      const targetCategory = acc.find(
-        (categoryWithNote) => categoryWithNote.id === cur.category_id
-      );
-
-      if (targetCategory) {
-        targetCategory.notes.push({
-          id: cur.note_id,
-          title: cur.note_title,
-        });
-      } else {
-        const categoryResponse = {
-          id: cur.category_id,
-          name: cur.category_name || "",
-          notes: cur.note_id
-            ? [
-                {
-                  id: cur.note_id,
-                  title: cur.note_title,
-                },
-              ]
-            : [],
-        };
-
-        acc.push(categoryResponse);
-      }
-
-      return acc;
+  const notesWithoutCategory = await prisma.note.findMany({
+    where: {
+      user_id: userId,
+      category_id: null,
     },
-    [{ id: null, name: "無分類", notes: [] }]
+    select: {
+      id: true,
+      title: true,
+    },
+  });
+
+  const combinedCategories: NetCategoryResponse[] = categoriesWithNotes.map(
+    (category) => {
+      return {
+        id: category.id,
+        name: category.name,
+        notes: category.notes.map((note) => ({
+          id: note.id,
+          title: note.title,
+        })),
+      };
+    }
   );
 
-  return result;
-};
+  const notesWithoutCategoryResponse: NetCategoryResponse[] =
+    notesWithoutCategory.map((note) => ({
+      id: null,
+      name: "無分類",
+      notes: [
+        {
+          id: note.id,
+          title: note.title,
+        },
+      ],
+    }));
+
+  return [...combinedCategories, ...notesWithoutCategoryResponse];
+}

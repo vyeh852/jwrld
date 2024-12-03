@@ -1,4 +1,4 @@
-import excuteQuery from "@/lib/db";
+import prisma from "@/lib/db";
 import {
   GetServerSidePropsContext,
   NextApiRequest,
@@ -15,22 +15,46 @@ const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    async signIn({ user: { id, name, email }, account }) {
-      await excuteQuery({
-        query:
-          "INSERT INTO users (name, email, platform_type, platform_id) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE name = ?, email = ?",
-        values: [name, email, account?.provider, id, name, email],
+    async signIn({ user, account }) {
+      const { id, name, email } = user;
+      if (!account || !id || !name || !email) {
+        throw new Error("Missing user information");
+      }
+
+      await prisma.user.upsert({
+        where: {
+          platform_type: account.provider,
+        },
+        update: {
+          name: name,
+          email: email,
+        },
+        create: {
+          name: name,
+          email: email,
+          platform_type: account.provider,
+        },
       });
 
       return true;
     },
-    async session({ session, token }) {
-      const user = await excuteQuery<Array<{ id: number }>>({
-        query: "SELECT id FROM users WHERE platform_id = ?",
-        values: [token.id],
+    async session({ session }) {
+      if (!session?.user?.email) {
+        throw new Error("User have no email");
+      }
+
+      const user = await prisma.user.findUnique({
+        where: {
+          email: session?.user?.email,
+        },
+        select: {
+          id: true,
+        },
       });
 
-      session["userId"] = user[0].id;
+      if (user) {
+        session["userId"] = user.id;
+      }
 
       return session;
     },
@@ -56,14 +80,21 @@ export const getUserSession = async (
   res: NextApiResponse | GetServerSidePropsContext["res"]
 ) => {
   const session = await getServerSession(req, res, authOptions);
-  if (!session) return;
+  if (!session?.user?.email) return;
 
-  const userId = await excuteQuery<Array<{ id: number }>>({
-    query: "SELECT id FROM users WHERE email = ?",
-    values: [session?.user?.email],
+  const user = await prisma.user.findUnique({
+    where: {
+      email: session?.user?.email,
+    },
+    select: {
+      id: true,
+    },
   });
 
-  session["userId"] = userId[0].id;
+  const userId = user?.id;
+  if (userId) {
+    session["userId"] = userId;
+  }
 
   return session;
 };

@@ -1,0 +1,59 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            Int       @id @default(autoincrement())
+  email         String    @unique @db.VarChar(255)
+  name          String    @db.VarChar(255)
+  platform_type String    @db.VarChar(50)
+  categories    Category[]
+  notes         Note[]
+
+  @@unique([platform_type])
+}
+
+model Category {
+  id         Int       @id @default(autoincrement())
+  name       String    @db.VarChar(255)
+  created_at DateTime  @default(now()) @db.Timestamp(0)
+  updated_at DateTime  @default(now()) @db.Timestamp(0) @updatedAt
+  user_id    Int
+  user       User      @relation(fields: [user_id], references: [id])
+  notes      Note[]
+
+  @@index([user_id])
+}
+
+model Note {
+  id            Int          @id @default(autoincrement())
+  title         String       @db.VarChar(255)
+  content       String?      @db.LongText
+  created_at    DateTime?    @default(now()) @db.Timestamp(0)
+  updated_at    DateTime?    @default(now()) @db.Timestamp(0) @updatedAt
+  user_id       Int
+  category_id   Int?
+  position      Int         @default(1)
+  user          User        @relation(fields: [user_id], references: [id])
+  category      Category?   @relation(fields: [category_id], references: [id])
+  noteHistories NoteHistory[]
+
+  @@index([user_id])
+  @@index([category_id])
+}
+
+model NoteHistory {
+  id         Int       @id @default(autoincrement())
+  note_id    Int
+  content    String    @db.Text
+  created_at DateTime  @default(now()) @db.Timestamp(0)
+  updated_at DateTime  @default(now()) @db.Timestamp(0) @updatedAt
+  note       Note      @relation(fields: [note_id], references: [id])
+
+  @@index([note_id])
+}
