@@ -3,6 +3,9 @@ import React from "react";
 import { styled } from "@linaria/react";
 import { useRouter } from "next/router";
 import { PreviewType } from "@/components/Layout";
+import pencilIcon from "@/components/assets/Pencil.svg";
+import eyeIcon from "@/components/assets/Eye.svg";
+import Image from "next/image";
 
 const HeaderContainer = styled.div`
   z-index: 10;
@@ -34,9 +37,12 @@ const ButtonGroup = styled.div`
 `;
 
 const Button = styled.div`
-  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   padding: 5px;
   border-radius: 5px;
+  cursor: pointer;
 
   &:hover {
     background: rgba(0, 0, 0, 0.03);
@@ -73,12 +79,12 @@ const Header = ({ onChoosePreviewType }: HeaderProps): JSX.Element => {
       {showPreviewButton && (
         <ButtonGroup>
           <Button onClick={() => onChoosePreviewType(PreviewType.Editing)}>
-            <i aria-hidden className="fa fa-pencil" />
+            <Image src={pencilIcon} alt="Pencil Icon" width={20} height={20} />
           </Button>
           <PreviewButton
             onClick={() => onChoosePreviewType(PreviewType.Reading)}
           >
-            <i aria-hidden className="fa fa-eye" />
+            <Image src={eyeIcon} alt="Eye Icon" width={20} height={20} />
           </PreviewButton>
         </ButtonGroup>
       )}
