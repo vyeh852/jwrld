@@ -14,6 +14,9 @@ const authOptions: NextAuthOptions = {
       clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
     }),
   ],
+  session: {
+    strategy: "jwt",
+  },
   callbacks: {
     async signIn({ user, account }) {
       const { id, name, email } = user;
@@ -38,14 +41,32 @@ const authOptions: NextAuthOptions = {
 
       return true;
     },
-    async session({ session }) {
-      if (!session?.user?.email) {
+    async session({ session, token }) {
+      if (token.userId && typeof token.userId === "number") {
+        session["userId"] = token.userId;
+      }
+
+      return session;
+    },
+    async jwt({ token, account }) {
+      if (!token.email) {
         throw new Error("User have no email");
+      }
+
+      if (account) {
+        token.accessToken = account.access_token;
+        token.refreshToken = account.refresh_token;
+        token.idToken = account.id_token;
+        token.provider = account.provider;
+      }
+
+      if (token.userId) {
+        return token;
       }
 
       const user = await prisma.user.findUnique({
         where: {
-          email: session?.user?.email,
+          email: token.email,
         },
         select: {
           id: true,
@@ -53,21 +74,9 @@ const authOptions: NextAuthOptions = {
       });
 
       if (user) {
-        session["userId"] = user.id;
+        token.userId = user.id;
       }
 
-      return session;
-    },
-    async jwt({ token, user, account }) {
-      if (account) {
-        token.accessToken = account.access_token;
-        token.refreshToken = account.refresh_token;
-        token.idToken = account.id_token;
-        token.provider = account.provider;
-      }
-      if (user) {
-        token.id = user.id.toString();
-      }
       return token;
     },
   },
@@ -80,21 +89,6 @@ export const getUserSession = async (
   res: NextApiResponse | GetServerSidePropsContext["res"]
 ) => {
   const session = await getServerSession(req, res, authOptions);
-  if (!session?.user?.email) return;
-
-  const user = await prisma.user.findUnique({
-    where: {
-      email: session?.user?.email,
-    },
-    select: {
-      id: true,
-    },
-  });
-
-  const userId = user?.id;
-  if (userId) {
-    session["userId"] = userId;
-  }
 
   return session;
 };
