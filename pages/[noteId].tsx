@@ -7,8 +7,8 @@ import Layout, { PreviewTypeContext } from "@/components/Layout";
 import Preview from "@/components/edit/Preview";
 import Editor from "@/components/edit/Editor";
 import { GetServerSideProps } from "next";
-import { getUserSession } from "@/pages/api/auth/[...nextauth]";
 import { useDebounce } from "@/hooks/useDebounce";
+import { getUserId } from "@/pages/api/auth/getUserId";
 
 const Container = styled.div`
   display: flex;
@@ -76,11 +76,10 @@ export default function Note({
 
 export const getServerSideProps: GetServerSideProps = async ({
   req,
-  res,
   params,
 }) => {
-  const session = await getUserSession(req, res);
-  if (!session) {
+  const userId = await getUserId(req);
+  if (!userId) {
     return {
       redirect: {
         destination: "/api/auth/signin",
@@ -95,7 +94,7 @@ export const getServerSideProps: GetServerSideProps = async ({
     };
   }
 
-  const noteContent = await getNote(params.noteId, session.userId);
+  const noteContent = await getNote(params.noteId, userId);
 
   if (noteContent === undefined) {
     return {
@@ -105,7 +104,6 @@ export const getServerSideProps: GetServerSideProps = async ({
 
   return {
     props: {
-      session,
       noteContent,
     },
   };

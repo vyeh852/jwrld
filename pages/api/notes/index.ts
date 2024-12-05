@@ -1,5 +1,5 @@
 import prisma from "@/lib/db";
-import { getUserSession } from "@/pages/api/auth/[...nextauth]";
+import { getUserId } from "@/pages/api/auth/getUserId";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 type Response = {
@@ -18,10 +18,10 @@ async function notesHandler(
   switch (req.method) {
     case "POST":
       try {
-        const session = await getUserSession(req, res);
+        const userId = await getUserId(req);
         const title: string = req.body.title;
 
-        if (!session?.userId) {
+        if (!userId) {
           throw new Error("User ID is required");
         }
 
@@ -29,7 +29,7 @@ async function notesHandler(
           data: {
             title: title,
             content: "",
-            user_id: session.userId,
+            user_id: userId,
           },
         });
 

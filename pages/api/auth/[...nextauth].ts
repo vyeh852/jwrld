@@ -1,10 +1,5 @@
 import prisma from "@/lib/db";
-import {
-  GetServerSidePropsContext,
-  NextApiRequest,
-  NextApiResponse,
-} from "next";
-import NextAuth, { NextAuthOptions, getServerSession } from "next-auth";
+import NextAuth, { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 
 const authOptions: NextAuthOptions = {
@@ -41,16 +36,12 @@ const authOptions: NextAuthOptions = {
 
       return true;
     },
-    async session({ session, token }) {
-      if (token.userId && typeof token.userId === "number") {
-        session["userId"] = token.userId;
-      }
-
+    async session({ session }) {
       return session;
     },
     async jwt({ token, account }) {
       if (!token.email) {
-        throw new Error("User have no email");
+        throw new Error("User has no email");
       }
 
       if (account) {
@@ -83,12 +74,3 @@ const authOptions: NextAuthOptions = {
 };
 
 export default NextAuth(authOptions);
-
-export const getUserSession = async (
-  req: NextApiRequest | GetServerSidePropsContext["req"],
-  res: NextApiResponse | GetServerSidePropsContext["res"]
-) => {
-  const session = await getServerSession(req, res, authOptions);
-
-  return session;
-};
