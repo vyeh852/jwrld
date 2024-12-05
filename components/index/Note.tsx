@@ -50,6 +50,7 @@ export default function Note(props: NoteProps): JSX.Element {
     }),
   });
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [{ canDrop, isOver }, dropRef] = useDrop(() => ({
     accept: ItemTypes.NOTE,
     // TODO: for better UX

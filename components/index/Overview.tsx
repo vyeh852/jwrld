@@ -14,7 +14,6 @@ import SettingsPanel from "@/components/index/SettingsPanel";
 import { styled } from "@linaria/react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import _ from "lodash";
 import { sortCategories } from "@/utils/sortCategories";
 
 const OverviewContainer = styled.div`
