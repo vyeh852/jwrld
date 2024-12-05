@@ -1,5 +1,5 @@
 import prisma from "@/lib/db";
-import { getUserId } from "@/pages/api/auth/getUserId";
+import { getUserSession } from "@/pages/api/auth/[...nextauth]";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 type Response = {
@@ -15,11 +15,8 @@ export default async function noteHandler(
   req: NextApiRequest,
   res: NextApiResponse<Response>
 ) {
-  const userId = await getUserId(req);
-
-  if (!userId) {
-    throw new Error("User ID is required");
-  }
+  const session = await getUserSession(req, res);
+  const userId = session?.userId;
 
   switch (req.method) {
     case "GET":

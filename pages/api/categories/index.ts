@@ -1,5 +1,5 @@
 import prisma from "@/lib/db";
-import { getUserId } from "@/pages/api/auth/getUserId";
+import { getUserSession } from "@/pages/api/auth/[...nextauth]";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 type Response = {
@@ -18,17 +18,17 @@ async function categoriesHandler(
   switch (req.method) {
     case "POST":
       try {
-        const userId = await getUserId(req);
+        const session = await getUserSession(req, res);
         const title: string = req.body.title;
 
-        if (!userId) {
+        if (!session?.userId) {
           throw new Error("User ID is required");
         }
 
         await prisma.category.create({
           data: {
             name: title,
-            user_id: userId,
+            user_id: session.userId,
           },
         });
 

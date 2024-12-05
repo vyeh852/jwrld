@@ -1,6 +1,6 @@
 import { NetNote } from "@/domain/remote/netNote";
 import prisma from "@/lib/db";
-import { getUserId } from "@/pages/api/auth/getUserId";
+import { getUserSession } from "@/pages/api/auth/[...nextauth]";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 type NetCategoryResponse = {
@@ -26,9 +26,9 @@ export default async function overviewHandler(
   switch (req.method) {
     case "GET":
       try {
-        const userId = await getUserId(req);
-
-        const categoryWithNote = await getCategories(userId ?? undefined);
+        const session = await getUserSession(req, res);
+        const userId = session?.userId;
+        const categoryWithNote = await getCategories(userId);
 
         res.status(200).json({
           success: true,

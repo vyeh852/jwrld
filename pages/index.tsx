@@ -1,25 +1,26 @@
 import React from "react";
 import IndexPage from "@/components/index/IndexPage";
 import OverView from "@/components/index/Overview";
+import { Session } from "next-auth";
 import { getCategories } from "@/pages/api/overview";
 import { Category } from "@/domain/models/category";
 import Layout from "@/components/Layout";
+import { getUserSession } from "@/pages/api/auth/[...nextauth]";
 import { GetServerSideProps } from "next";
-import { getUserId } from "@/pages/api/auth/getUserId";
 
 /**
  * @return {JSX.Element}
  */
 export default function Index({
-  userId,
+  session,
   categories,
 }: {
-  userId: string;
+  session: Session;
   categories: Category[];
 }) {
   return (
     <Layout>
-      {userId ? <OverView categories={categories} /> : <IndexPage />}
+      {session ? <OverView categories={categories} /> : <IndexPage />}
     </Layout>
   );
 }
@@ -27,15 +28,15 @@ export default function Index({
 /**
  * if verified google login, pass the session to the provider
  */
-export const getServerSideProps: GetServerSideProps = async ({ req }) => {
-  const userId = await getUserId(req);
+export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
+  const session = await getUserSession(req, res);
 
-  if (userId) {
-    const categories = await getCategories(userId);
+  if (session) {
+    const categories = await getCategories(session.userId);
 
     return {
       props: {
-        userId,
+        session,
         categories,
       },
     };
@@ -43,7 +44,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 
   return {
     props: {
-      userId: null,
+      session: null,
     },
   };
 };
