@@ -9,17 +9,13 @@ const Container = styled.div`
   @media (min-width: 768px) {
     display: flex;
     padding: 100px;
-    .button-groups,
-    .feature-preview {
-      flex: 1;
-    }
   }
 `;
 
 /**
  * @return {JSX.Element}
  */
-export default function IndexPage(): JSX.Element {
+const IndexPage = (): JSX.Element => {
   const [activeIndex, setActiveIndex] = useState(0);
 
   return (
@@ -31,4 +27,6 @@ export default function IndexPage(): JSX.Element {
       <FeaturePreview activeIndex={activeIndex} />
     </Container>
   );
-}
+};
+
+export default IndexPage;

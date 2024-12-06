@@ -82,9 +82,11 @@ interface ModalProps {
  */
 const Modal = ({ show, onConfirm, onClose, children, title }: ModalProps) => {
   useEffect(() => {
-    document.getElementsByClassName("modal show").length > 0
-      ? (document.body.style.overflow = "hidden")
-      : (document.body.style.overflow = "");
+    if (show) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
 
     return () => {
       document.body.style.overflow = "";

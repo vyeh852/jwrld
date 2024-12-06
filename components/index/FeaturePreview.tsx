@@ -5,37 +5,39 @@ const Container = styled.div`
   position: relative;
   margin: 0 15px;
 
-  img {
-    transition: opacity 0.25s ease-in-out;
-    position: absolute;
-    top: 0;
-    left: 0;
-    opacity: 0;
-    width: 100%;
-    height: auto;
-
-    &[data-active="active"] {
-      opacity: 1;
-    }
+  @media (min-width: 768px) {
+    flex: 1;
   }
 `;
 
-type FeaturePreviewProps = {
+const Image = styled.img`
+  transition: opacity 0.25s ease-in-out;
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  width: 100%;
+  height: auto;
+
+  &[data-active="active"] {
+    opacity: 1;
+  }
+`;
+
+interface FeaturePreviewProps {
   activeIndex: number;
-};
+}
 
 const imageSrcs: string[] = ["/static/markdown.png", "/static/drag.gif"];
 
 /**
  * @return {JSX.Element}
  */
-export default function FeaturePreview({
-  activeIndex,
-}: FeaturePreviewProps): JSX.Element {
+const FeaturePreview = ({ activeIndex }: FeaturePreviewProps): JSX.Element => {
   return (
-    <Container className="feature-preview">
+    <Container>
       {imageSrcs.map((imageSrc, index) => (
-        <img
+        <Image
           src={imageSrc}
           key={index}
           data-active={index === activeIndex ? "active" : undefined}
@@ -43,4 +45,6 @@ export default function FeaturePreview({
       ))}
     </Container>
   );
-}
+};
+
+export default FeaturePreview;
