@@ -5,33 +5,37 @@ const SettingsPanelContainer = styled.div`
   flex: 0 0 200px;
   background: #fbfbfa;
   padding: 10px;
+
   @media (max-width: 768px) {
     display: none;
   }
+`;
 
-  > div {
-    padding: 5px;
-    &:hover {
-      cursor: pointer;
-      background: rgba(0, 0, 0, 0.04);
-    }
+const Setting = styled.div`
+  padding: 5px;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.04);
+    cursor: pointer;
   }
 `;
 
 /**
  * @return {JSX.Element}
  */
-export default function SettingsPanel({
+const SettingsPanel = ({
   onCreateNote,
   onCreateCategory,
 }: {
   onCreateNote: () => void;
   onCreateCategory: () => void;
-}): JSX.Element {
+}): JSX.Element => {
   return (
     <SettingsPanelContainer>
-      <div onClick={onCreateNote}>Create Note</div>
-      <div onClick={onCreateCategory}>Create Category</div>
+      <Setting onClick={onCreateNote}>Create Note</Setting>
+      <Setting onClick={onCreateCategory}>Create Category</Setting>
     </SettingsPanelContainer>
   );
-}
+};
+
+export default SettingsPanel;

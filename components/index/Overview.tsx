@@ -9,7 +9,7 @@ import {
 } from "@/reducers/ModalReducer";
 import { getCategories } from "@/actions/fetchActions";
 import { Category as DomainCategory } from "@/domain/models/category";
-import { Category } from "@/components/index/Category";
+import Category from "@/components/index/Category";
 import SettingsPanel from "@/components/index/SettingsPanel";
 import { styled } from "@linaria/react";
 import { DndProvider } from "react-dnd";
@@ -20,28 +20,16 @@ const OverviewContainer = styled.div`
   display: flex;
 `;
 
-const Container = styled.div`
+const CategoryContainer = styled.div`
   &&& {
     height: calc(100vh - 50px);
     overflow: auto;
     padding: 15px;
     flex: 1;
-    > div {
-      margin-bottom: 15px;
-    }
+
     @media (min-width: 768px) {
       display: flex;
       flex-wrap: wrap;
-      .category-title {
-        padding: 0 15px;
-      }
-    }
-
-    .category-title {
-      margin-bottom: 15px;
-      font-size: 20px;
-      font-weight: 700;
-      background: #fff;
     }
   }
 `;
@@ -49,11 +37,11 @@ const Container = styled.div`
 /**
  * @return {JSX.Element}
  */
-export default function OverView({
+const OverView = ({
   categories: initialCategories,
 }: {
   categories: DomainCategory[];
-}): JSX.Element {
+}): JSX.Element => {
   const [categories, setCategories] = useState(initialCategories);
   const [modal, dispatchModal] = useReducer<Reducer<State, Action>>(
     reducer,
@@ -89,7 +77,7 @@ export default function OverView({
         onCreateNote={() => dispatchModal({ type: ActionType.CreateNote })}
       />
       <DndProvider backend={HTML5Backend}>
-        <Container>
+        <CategoryContainer>
           {categories.map((category) => (
             <Category
               onMoveNote={onMoveNote}
@@ -103,7 +91,7 @@ export default function OverView({
               }
             />
           ))}
-        </Container>
+        </CategoryContainer>
       </DndProvider>
       <Modal
         title={title}
@@ -126,4 +114,6 @@ export default function OverView({
       </Modal>
     </OverviewContainer>
   );
-}
+};
+
+export default OverView;

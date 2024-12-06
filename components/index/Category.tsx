@@ -6,38 +6,42 @@ import { styled } from "@linaria/react";
 import { DropTargetMonitor, useDrop } from "react-dnd";
 import { ItemTypes } from "@/constant/draggableItem";
 
+const Container = styled.div`
+  min-width: 150px;
+  margin-bottom: 15px;
+
+  &[data-isOver="true"] {
+    background: #eee;
+  }
+`;
+
+const Title = styled.p`
+  margin-bottom: 15px;
+  font-size: 20px;
+  font-weight: 700;
+  background: #fff;
+
+  @media (min-width: 768px) {
+    padding: 0 15px;
+  }
+`;
+
 const NoteContainer = styled.div`
   @media (min-width: 768px) {
     margin: 15px;
   }
-  > div {
-    padding: 15px;
-    border-top: 1px solid #dadce0;
-    border-left: 1px solid #dadce0;
-    border-right: 1px solid #dadce0;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    white-space: nowrap;
-    &:last-child {
-      border-bottom: 1px solid #dadce0;
-    }
-    &:hover {
-      background: rgba(0, 0, 0, 0.04);
-      cursor: pointer;
-    }
-  }
 `;
 
-type CategoryProps = {
+interface CategoryProps {
   category: DomainCategory;
   onMoveNote: (
     from: { categoryId: number | null; index: number },
     to: { categoryId: number | null; index: number }
   ) => void;
   onDeleteNote: ({ id, title }: Pick<DomainNote, "id" | "title">) => void;
-};
+}
 
-export const Category = ({
+const Category = ({
   category,
   onDeleteNote,
   onMoveNote,
@@ -76,11 +80,8 @@ export const Category = ({
   });
 
   return (
-    <div
-      ref={dropRef}
-      style={{ minWidth: "150px", background: isOver ? "#eee" : "transparent" }}
-    >
-      <p className="category-title">{category.name}</p>
+    <Container ref={dropRef} data-isOver={isOver}>
+      <Title>{category.name}</Title>
       <NoteContainer>
         {category.notes.map((note, index) => (
           <Note
@@ -92,6 +93,8 @@ export const Category = ({
           />
         ))}
       </NoteContainer>
-    </div>
+    </Container>
   );
 };
+
+export default Category;
