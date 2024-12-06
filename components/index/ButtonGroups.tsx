@@ -19,7 +19,7 @@ const ButtonContainer = styled.div`
   color: rgba(51, 51, 51, 0.7);
   cursor: pointer;
 
-  &[data-active="active"] {
+  &[data-active="true"] {
     border-radius: 6px;
     box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
     color: #333;
@@ -93,7 +93,7 @@ const Button = ({
 }: ButtonProps): JSX.Element => {
   return (
     <ButtonContainer
-      data-active={active ? "active" : undefined}
+      data-active={active}
       onClick={onActiveButton}
       onMouseEnter={onActiveButton}
     >

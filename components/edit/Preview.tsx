@@ -3,8 +3,9 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { styled } from "@linaria/react";
 import CodeBlock from "@/components/edit/CodeBlock";
+import { PreviewType } from "@/components/Layout";
 
-const MarkdownResult = styled(ReactMarkdown)`
+const Container = styled.div`
   flex: 1 1 50%;
   min-width: 0;
   height: calc(100vh - 50px);
@@ -14,6 +15,18 @@ const MarkdownResult = styled(ReactMarkdown)`
   width: 100%;
   max-width: 750px;
 
+  &[data-preview-type="editing"] {
+    @media (max-width: 768px) {
+      display: none;
+    }
+  }
+
+  &[data-preview-type="reading"] {
+    height: auto;
+  }
+`;
+
+const Markdown = styled(ReactMarkdown)`
   img {
     max-width: 100%;
     vertical-align: middle;
@@ -118,23 +131,26 @@ const MarkdownResult = styled(ReactMarkdown)`
 
 interface PreviewProps {
   noteContent: string;
+  previewType: PreviewType;
 }
 
 /**
  * @param {PreviewProps} props
  * @return {JSX.Element}
  */
-const Preview = ({ noteContent }: PreviewProps): JSX.Element => {
+const Preview = ({ noteContent, previewType }: PreviewProps): JSX.Element => {
   return (
-    <MarkdownResult
-      className="markdown-result"
-      components={{
-        code: CodeBlock,
-      }}
-      remarkPlugins={[remarkGfm]}
-    >
-      {noteContent}
-    </MarkdownResult>
+    <Container data-preview-type={previewType}>
+      <Markdown
+        components={{
+          code: CodeBlock,
+        }}
+        remarkPlugins={[remarkGfm]}
+        data-preview-type={previewType}
+      >
+        {noteContent}
+      </Markdown>
+    </Container>
   );
 };
 

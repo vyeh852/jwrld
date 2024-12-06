@@ -19,7 +19,7 @@ const Image = styled.img`
   width: 100%;
   height: auto;
 
-  &[data-active="active"] {
+  &[data-active="true"] {
     opacity: 1;
   }
 `;
@@ -37,11 +37,7 @@ const FeaturePreview = ({ activeIndex }: FeaturePreviewProps): JSX.Element => {
   return (
     <Container>
       {imageSrcs.map((imageSrc, index) => (
-        <Image
-          src={imageSrc}
-          key={index}
-          data-active={index === activeIndex ? "active" : undefined}
-        />
+        <Image src={imageSrc} key={index} data-active={index === activeIndex} />
       ))}
     </Container>
   );

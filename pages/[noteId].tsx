@@ -3,7 +3,7 @@ import { styled } from "@linaria/react";
 import { getNote } from "@/pages/api/notes/[noteId]";
 import { updateNote } from "@/actions/fetchActions";
 import { useRouter } from "next/router";
-import Layout, { PreviewTypeContext } from "@/components/Layout";
+import Layout, { PreviewType, PreviewTypeContext } from "@/components/Layout";
 import Preview from "@/components/edit/Preview";
 import Editor from "@/components/edit/Editor";
 import { GetServerSideProps } from "next";
@@ -12,24 +12,6 @@ import { useDebounce } from "@/hooks/useDebounce";
 
 const Container = styled.div`
   display: flex;
-
-  &.editing {
-    @media (max-width: 768px) {
-      .markdown-result {
-        display: none;
-      }
-    }
-  }
-
-  &.reading {
-    > .code-mirror {
-      display: none;
-    }
-    > .markdown-result {
-      overflow: auto;
-      height: auto;
-    }
-  }
 `;
 
 /**
@@ -61,12 +43,16 @@ export default function Note({
     <Layout>
       <PreviewTypeContext.Consumer>
         {(previewType) => (
-          <Container className={previewType}>
-            <Editor
-              noteContent={noteContent}
-              onChangeNoteContent={(noteContent) => setNoteContent(noteContent)}
-            />
-            <Preview noteContent={noteContent} />
+          <Container>
+            {previewType === PreviewType.Editing && (
+              <Editor
+                noteContent={noteContent}
+                onChangeNoteContent={(noteContent) =>
+                  setNoteContent(noteContent)
+                }
+              />
+            )}
+            <Preview noteContent={noteContent} previewType={previewType} />
           </Container>
         )}
       </PreviewTypeContext.Consumer>

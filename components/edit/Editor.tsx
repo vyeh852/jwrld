@@ -39,7 +39,7 @@ const Editor = ({
   onChangeNoteContent,
 }: EditorProps): JSX.Element => {
   return (
-    <Textarea className="code-mirror">
+    <Textarea>
       <CodeMirror
         value={noteContent}
         basicSetup={{
