@@ -88,17 +88,23 @@ export async function getCategories(
     }
   );
 
-  const notesWithoutCategoryResponse: NetCategoryResponse[] =
-    notesWithoutCategory.map((note) => ({
-      id: null,
-      name: "無分類",
-      notes: [
-        {
-          id: note.id,
-          title: note.title,
-        },
-      ],
-    }));
+  const notesWithoutCategoryResponse =
+    notesWithoutCategory.reduce<NetCategoryResponse>(
+      (acc, cur) => {
+        const { id, title } = cur;
+        acc.notes.push({
+          id,
+          title,
+        });
 
-  return [...combinedCategories, ...notesWithoutCategoryResponse];
+        return acc;
+      },
+      {
+        id: null,
+        name: "無分類",
+        notes: [],
+      }
+    );
+
+  return [notesWithoutCategoryResponse, ...combinedCategories];
 }
